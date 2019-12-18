@@ -1,5 +1,6 @@
-// import 'react-table/react-table.css';
-// import './scss/index.scss';
+import 'react-table-v6/react-table.css';
+import 'react-splitter-layout/lib/index.css';
+import './scss/index.scss';
 
 import React from 'react';
 import { render }  from 'react-dom';
