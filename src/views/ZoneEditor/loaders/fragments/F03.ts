@@ -6,7 +6,7 @@ export class F03 extends BaseFragment
 {
     public count:        number | null;
     public name_lengths: number[];
-    public entries:      any[];
+    public entries:      string[];
 
     constructor(header: FragmentHeader)
     {

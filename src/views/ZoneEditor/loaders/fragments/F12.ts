@@ -10,16 +10,16 @@ interface BoneAnimationFlags
     bit3: boolean;
 }
 
-interface BoneFrame
+export interface BoneFrame
 {
-    rotate:   number;
-    rotate_x: number;
-    rotate_y: number;
-    rotate_z: number;
-    shift_x:  number;
-    shift_y:  number;
-    shift_z:  number;
-    shift:    number;
+    rotate:      number;
+    rotate_x:    number;
+    rotate_y:    number;
+    rotate_z:    number;
+    translate_x: number;
+    translate_y: number;
+    translate_z: number;
+    translate:   number;
 }
 
 export class F12 extends BaseFragment
@@ -59,14 +59,14 @@ export class F12 extends BaseFragment
         for (let i = 0; i < frame_count; i++)
         {
             this.frames.push({
-                rotate:   buffer.readInt16LE(),
-                rotate_x: buffer.readInt16LE(),
-                rotate_y: buffer.readInt16LE(),
-                rotate_z: buffer.readInt16LE(),
-                shift_x:  buffer.readInt16LE(),
-                shift_y:  buffer.readInt16LE(),
-                shift_z:  buffer.readInt16LE(),
-                shift:    buffer.readInt16LE()
+                rotate:      buffer.readInt16LE(),
+                rotate_x:    buffer.readInt16LE(),
+                rotate_y:    buffer.readInt16LE(),
+                rotate_z:    buffer.readInt16LE(),
+                translate_x: buffer.readInt16LE(),
+                translate_y: buffer.readInt16LE(),
+                translate_z: buffer.readInt16LE(),
+                translate:   buffer.readInt16LE()
             });
         }
 

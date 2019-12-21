@@ -22,6 +22,14 @@ interface VertexNormal
     k: number;
 }
 
+interface VertexColor
+{
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
 interface Polygon
 {
     flag:     number;
@@ -48,29 +56,29 @@ interface VertexMaterial
 
 export class F36 extends BaseFragment
 {
-    public flags:               number | null;
+    public flags:               number;
     public multimaterial:       BaseFragment | null;
     public animated_vertices:   BaseFragment | null;
     public fragment3:           BaseFragment | null;
     public fragment4:           BaseFragment | null;
 
-    public x:                   number | null;
-    public y:                   number | null;
-    public z:                   number | null;
+    public x:                   number;
+    public y:                   number;
+    public z:                   number;
     public rotation:            number[];
-    public max_dist:            number | null;
-    public min_x:               number | null;
-    public min_y:               number | null;
-    public min_z:               number | null;
-    public max_x:               number | null;
-    public max_y:               number | null;
-    public max_z:               number | null;
-    public scale:               number | null;
+    public max_dist:            number;
+    public min_x:               number;
+    public min_y:               number;
+    public min_z:               number;
+    public max_x:               number;
+    public max_y:               number;
+    public max_z:               number;
+    public scale:               number;
 
     public vertices:            Vertex[];
     public uvs:                 uv[];
     public normals:             VertexNormal[];
-    public colors:              number[];
+    public colors:              VertexColor[];
     public polygons:            Polygon[];
     public vert_pieces:         VertexPiece[];
     public poly_materials:      PolygonMaterial[];
@@ -82,24 +90,24 @@ export class F36 extends BaseFragment
         super(header);
         this.desc = "Mesh";
         
-        this.flags               = null;
+        this.flags               = 0;
         this.multimaterial       = null;
         this.animated_vertices   = null;
         this.fragment3           = null;
         this.fragment4           = null;
 
-        this.x                   = null;
-        this.y                   = null;
-        this.z                   = null;
+        this.x                   = 0;
+        this.y                   = 0;
+        this.z                   = 0;
         this.rotation            = [];
-        this.max_dist            = null;
-        this.min_x               = null;
-        this.min_y               = null;
-        this.min_z               = null;
-        this.max_x               = null;
-        this.max_y               = null;
-        this.max_z               = null;
-        this.scale               = null;
+        this.max_dist            = 0;
+        this.min_x               = 0;
+        this.min_y               = 0;
+        this.min_z               = 0;
+        this.max_x               = 0;
+        this.max_y               = 0;
+        this.max_z               = 0;
+        this.scale               = 0;
 
         this.vertices            = [];
         this.uvs                 = [];
@@ -149,7 +157,7 @@ export class F36 extends BaseFragment
         const vert_piece_count    = buffer.readInt16LE();
         const poly_material_count = buffer.readInt16LE();
         const vert_material_count = buffer.readInt16LE();
-        const size9               = buffer.readInt16LE();
+        /*const size9               = */buffer.readInt16LE();
 
         this.scale                = buffer.readInt16LE();
 
@@ -196,11 +204,19 @@ export class F36 extends BaseFragment
         }
 
         // Vertex Colors
-        for (let i = 0; i < colors_count; i++)
+        for (let j = 0; j < colors_count; j++)
         {
-            this.colors.push(buffer.readInt32LE());
-        }
+            let dwColor = buffer.readInt32LE();
+            let r: number, g: number, b: number, a: number;
 
+            r = dwColor & 0xFF; dwColor >>= 8;
+            g = dwColor & 0xFF; dwColor >>= 8;
+            b = dwColor & 0xFF; dwColor >>= 8;
+            a = dwColor & 0xFF;
+
+            this.colors.push({ r, g, b, a });
+        }
+        
         // Polygons
         for (let i = 0; i < polygon_count; i++)
         {

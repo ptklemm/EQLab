@@ -9,7 +9,7 @@ interface SkeletonFlags
     bit9: boolean;
 }
 
-class Bone
+export class Bone
 {
     public name:      BaseFragment | string | null;
     public flags:     number;

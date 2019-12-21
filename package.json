@@ -25,6 +25,7 @@
         "electron-window-manager": "^1.0.6",
         "electron-window-state-manager": "^0.3.2",
         "fs-extra": "^8.1.0",
+        "jimp": "^0.9.3",
         "lodash": "^4.17.15",
         "mysql": "^2.17.1",
         "react": "^16.12.0",
@@ -40,6 +41,7 @@
         "redux-devtools-extension": "^2.13.8",
         "redux-form": "^8.2.6",
         "smart-buffer": "^4.1.0",
+        "to-arraybuffer": "^1.0.1",
         "treeize": "^2.1.2"
     },
     "devDependencies": {

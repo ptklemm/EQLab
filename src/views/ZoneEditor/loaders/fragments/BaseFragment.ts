@@ -15,8 +15,8 @@ export abstract class BaseFragment
     readonly offset: number;
     readonly size:   number;
     readonly type:   number;
-    public desc:   string | null;
-    public name:   string | null;
+    public desc:     string;
+    public name:     string;
 
     constructor(header: FragmentHeader)
     {
@@ -24,8 +24,8 @@ export abstract class BaseFragment
         this.offset = header.offset;
         this.size   = header.size;
         this.type   = header.type;
-        this.desc   = null;
-        this.name   = null;
+        this.desc   = '';
+        this.name   = '';
     }
 
     public Load(buffer: SmartBuffer, wld: WLDFile): void {}
@@ -41,7 +41,7 @@ export abstract class BaseFragment
         buffer.readOffset = this.offset + 8 + this.size;
     }
 
-    static GetName(buffer: SmartBuffer, wld: WLDFile): string | null
+    static GetName(buffer: SmartBuffer, wld: WLDFile): string
     {
         let val = buffer.readInt32LE();
 
@@ -57,7 +57,7 @@ export abstract class BaseFragment
         }
         else
         {
-            return null;
+            return '';
         }
     }
 }

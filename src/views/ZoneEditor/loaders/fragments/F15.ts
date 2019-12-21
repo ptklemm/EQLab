@@ -4,38 +4,38 @@ import WLDFile from '../WLD';
 
 export class F15 extends ReferenceFragment
 {
-    public flags:     number | null;
+    public flags:     number;
     public fragment1: BaseFragment | string | null;
-    public x:         number | null;
-    public y:         number | null;
-    public z:         number | null;
-    public rotate_x:  number | null;
-    public rotate_y:  number | null;
-    public rotate_z:  number | null;
-    public scale_x:   number | null;
-    public scale_y:   number | null;
-    public scale_z:   number | null;
+    public x:         number;
+    public y:         number;
+    public z:         number;
+    public rotate_x:  number;
+    public rotate_y:  number;
+    public rotate_z:  number;
+    public scale_x:   number;
+    public scale_y:   number;
+    public scale_z:   number;
     public fragment2: BaseFragment | string | null;
-    public params2:   number | null;
+    public params2:   number;
 
     constructor(header: FragmentHeader)
     {
         super(header);
         this.desc = "Object Location";
 
-        this.flags     = null;
+        this.flags     = 0;
         this.fragment1 = null;
-        this.x         = null;
-        this.y         = null;
-        this.z         = null;
-        this.rotate_x  = null;
-        this.rotate_y  = null;
-        this.rotate_z  = null;
-        this.scale_x   = null;
-        this.scale_y   = null;
-        this.scale_z   = null;
+        this.x         = 0;
+        this.y         = 0;
+        this.z         = 0;
+        this.rotate_x  = 0;
+        this.rotate_y  = 0;
+        this.rotate_z  = 0;
+        this.scale_x   = 0;
+        this.scale_y   = 0;
+        this.scale_z   = 0;
         this.fragment2 = null;
-        this.params2   = null;
+        this.params2   = 0;
     }
 
     public Load(buffer: SmartBuffer, wld: WLDFile): F15 {

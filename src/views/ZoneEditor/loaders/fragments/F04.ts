@@ -4,10 +4,10 @@ import WLDFile from '../WLD';
 
 export class F04 extends BaseFragment
 {
-    public flags:        number | null;
+    public flags:        number;
     public is_animated:  boolean;
-    public count:        number | null;
-    public milliseconds: number | null;
+    public count:        number;
+    public milliseconds: number;
     public refs:         BaseFragment[];
 
     constructor(header: FragmentHeader)
@@ -15,10 +15,10 @@ export class F04 extends BaseFragment
         super(header);
         this.desc = "Texture Animation Info";
 
-        this.flags        = null;
+        this.flags        = 0;
         this.is_animated  = false;
-        this.count        = null;
-        this.milliseconds = null;
+        this.count        = 0;
+        this.milliseconds = 0;
         this.refs         = [];
     }
 

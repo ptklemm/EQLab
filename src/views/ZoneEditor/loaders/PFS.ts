@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import path from 'path';
 import { SmartBuffer } from 'smart-buffer'
 import zlib from 'zlib';
 
@@ -18,21 +19,24 @@ class PFSDirEntry
 
 export class PFSFile
 {
-    public name:   string | null;
+    public name:   string;
     public buffer: Buffer;
 
-    constructor(name: string | null, buffer: Buffer)
+    constructor(name: string, buffer: Buffer)
     {
         this.name   = name;
         this.buffer = buffer;
     }
 }
 
-class PFSArchive
+export default class PFSArchive
 {
     static SIGNATURE = 0x20534650;
 
-    public filepath:     string;
+    readonly filepath:   string;
+    readonly name:       string;
+    readonly pfs_type:   string;
+
     private size:        number | null;
 
     private dir_offset:  number | null;
@@ -50,6 +54,8 @@ class PFSArchive
     constructor(filepath: string)
     {
         this.filepath    = filepath;
+        this.name        = path.basename(filepath, path.extname(filepath));
+        this.pfs_type    = this.DetermineType(this.name);
         this.size        = null;
         this.dir_offset  = null;
         this.signature   = null;
@@ -97,7 +103,7 @@ class PFSArchive
         }
 
         // Load filenames from last dir entry
-        const filenames_file = this.DecompressEntry(pfs, null, this.directory[this.directory.length - 1]);
+        const filenames_file = this.DecompressEntry(pfs, '', this.directory[this.directory.length - 1]);
         this.filenames = this.DecodeFilenames(filenames_file);
 
         // Decompress files
@@ -114,6 +120,33 @@ class PFSArchive
     public FileList(): string[]
     {
         return this.filenames;
+    }
+
+    public GetMainWLD(): PFSFile | any
+    {
+        if (this.pfs_type === 'Zone')
+        {
+            const zoneWLD = this.GetFile(this.name + '.wld');
+            const objplaceWLD = this.GetFile('objects.wld');
+            const lightsWLD = this.GetFile('lights.wld');
+
+            return [zoneWLD, objplaceWLD, lightsWLD];
+        }
+        else
+        {
+            return this.GetFile(this.name + '.wld');
+        }
+    }
+
+    public GetTextures(): PFSFile[]
+    {
+        let array: PFSFile[] = [];
+
+        array = array.concat(this.GetFilesByExtension('.bmp'))
+                     .concat(this.GetFilesByExtension('.dds'))
+                     .concat(this.GetFilesByExtension('.jpg'));
+
+        return array;
     }
 
     public GetFile(id: string | number): PFSFile | undefined
@@ -135,7 +168,24 @@ class PFSArchive
         return this.files[index];
     }
 
-    private DecompressEntry(pfs: SmartBuffer, filename: string | null, dir_entry: PFSDirEntry): PFSFile
+    public GetFilesByExtension(ext: string): PFSFile[]
+    {
+        ext = ext.toLowerCase();
+
+        const array: PFSFile[] = [];
+
+        for (const file of this.files)
+        {
+            if (file.name.endsWith(ext))
+            {
+                array.push(file);
+            }
+        }
+
+        return array;
+    }
+
+    private DecompressEntry(pfs: SmartBuffer, filename: string, dir_entry: PFSDirEntry): PFSFile
     {
         const decompressed: Buffer[] = [];
 
@@ -171,12 +221,17 @@ class PFSArchive
             const length = buffer.readInt32LE();
             const filename = buffer.readString(length-1);
             buffer.readOffset += 1;
-            filenames.push(filename);
+            filenames.push(filename.toLowerCase());
         }
 
         return filenames;
     }
 
-}
+    private DetermineType(name: string): string
+    {
+        if (name.endsWith('_chr'))      { return 'Character'; }
+        else if (name.endsWith('_obj')) { return 'Object';    }
+        else                            { return 'Zone';      }
+    }
 
-export default PFSArchive;
+}

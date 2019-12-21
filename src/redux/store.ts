@@ -1,7 +1,7 @@
 import { createStore, Store } from 'redux';
 import { devToolsEnhancer } from 'redux-devtools-extension/logOnlyInProduction';
 import { ZoneEditor_reducer, IZoneEditorState }         from './reducer';
-import { reducer as formReducer, FormStateMap }         from 'redux-form';
+// import { reducer as formReducer, FormStateMap }         from 'redux-form';
 
 /*-------------- Store --------------------*/
 

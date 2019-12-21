@@ -25,7 +25,7 @@ class WLDHeader
     }
 }
 
-class WLDFile
+export default class WLDFile
 {
     static SIGNATURE = 0x54503D02;
     static VERSION_1 = 0x00015500;
@@ -33,7 +33,7 @@ class WLDFile
     static STR_HASH  = [0x95, 0x3A, 0xC5, 0x2A, 0x95, 0x7A, 0x95, 0x6A];
 
     public name:        string | null;
-    public options:     any;
+    public type:        string;
     public buffer:      Buffer;
     public size:        number;
     public header:      WLDHeader | null;
@@ -44,7 +44,7 @@ class WLDFile
     constructor(file: PFSFile)
     {
         this.name        = file.name;
-        this.options     = {};
+        this.type        = this.GetWLDType(file.name as string);
         this.buffer      = file.buffer;
         this.size        = file.buffer.length;
         this.header      = null;
@@ -133,6 +133,15 @@ class WLDFile
         {
             return this.GetFragmentByIndex(index);
         }
+    }
+
+    private GetWLDType(name: string): string
+    {
+        const basename = name.replace('.wld', '');
+
+        if      (basename.endsWith('_obj')) { return 'Object';    }
+        else if (basename.endsWith('_chr')) { return 'Character'; }
+        else                                { return 'Zone';      }
     }
 
     private CreateFragment(buffer: SmartBuffer, header: Fragments.FragmentHeader): Fragments.BaseFragment
@@ -234,7 +243,8 @@ class WLDFile
                 break;
             } 
             case 0x29: {
-                fragment = new Fragments.F29(header).Load(buffer, this);
+                // Region Flag, not working
+                fragment = new Fragments.F29(header).Skip(buffer);
                 break;
             } 
             case 0x2A: {
@@ -290,7 +300,7 @@ class WLDFile
                 break;
             } 
             default:
-                throw new Error(`${this.name}: Error creating fragment. Invalid type at byte ${header.offset}`);
+                throw new Error(`${this.name}: Error creating fragment. Invalid type at byte ${header.offset}. Previous fragment starts at ${this.fragments[this.fragments.length-1].offset}.`);
         }
 
         return fragment;
@@ -308,5 +318,3 @@ class WLDFile
         return string.toString('ascii');
     }
 }
-
-export default WLDFile

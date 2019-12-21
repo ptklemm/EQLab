@@ -12,10 +12,10 @@ interface RGBAColor
 
 export class F32 extends BaseFragment
 {
-    public data1:         number | null;
-    public data2:         number | null;
-    public data3:         number | null;
-    public data4:         number | null;
+    public data1:         number;
+    public data2:         number;
+    public data3:         number;
+    public data4:         number;
     public vertex_colors: any[];
 
     constructor(header: FragmentHeader)
@@ -23,10 +23,10 @@ export class F32 extends BaseFragment
         super(header);
         this.desc = "Vertex Color";
 
-        this.data1         = null;
-        this.data2         = null;
-        this.data3         = null;
-        this.data4         = null;
+        this.data1         = 0;
+        this.data2         = 0;
+        this.data3         = 0;
+        this.data4         = 0;
         this.vertex_colors = [];
     }
 

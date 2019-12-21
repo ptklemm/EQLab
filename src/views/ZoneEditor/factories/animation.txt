@@ -1,0 +1,132 @@
+    private async CreateAnimatedTexture(f04: FRAGMENTS.F04, masked: boolean): Promise<BABYLON.Texture | null>
+    {
+        const texture_name = f04.name;
+        const image_files: Jimp[] = [];
+        const formats: string[] = [];
+
+        for (let i = 0; i < f04.refs.length; i++)
+        {
+            const f03 = f04.refs[i] as FRAGMENTS.F03;
+            const image_name = f03.entries[0].toLowerCase();
+            const image_file = _.find(this._textures, { name: image_name });
+
+            if (image_file)
+            {
+                formats.push(image_file.name.slice(image_file.name.lastIndexOf('.')));
+                image_files.push(await Jimp.read(image_file.buffer));
+            }
+        }
+
+        if (!image_files.length)
+            return null;
+
+        const num_files = image_files.length;
+        const is_square = num_files > 0 && Math.sqrt(num_files) % 1 === 0;
+        const is_even   = num_files > 0 && num_files % 2 === 0;
+        const width     = image_files[0].bitmap.width;
+        const height    = image_files[0].bitmap.height;
+
+        let num_rows: number, num_cols: number, tiles: number;
+
+        if (is_square)
+        {
+            num_rows = Math.sqrt(num_files);
+            num_cols = num_rows;
+            tiles = num_rows;
+        }
+        else
+        {
+            if (is_even)
+            {
+                num_rows = 2;
+                num_cols = num_files / 2;
+            }
+            else
+            {
+                num_rows = 1;
+                num_cols = num_files;
+            }
+
+            tiles = num_cols;
+        }
+
+        const new_image = new Jimp(width * num_cols, height * num_rows);
+
+        for (let i = 0; i < num_files; i++)
+        {
+            const row = Math.floor(i / tiles);
+            const col = i % tiles;
+
+            let image = image_files[i];
+            const format = formats[i];
+
+            if (masked && format === '.bmp')
+            {
+                image = this.MaskBMP(image);
+            }
+
+            new_image.composite(image, col * width, row * width);  
+        }
+
+        const texture_buffer = toArrayBuffer(await new_image.getBufferAsync(Jimp.MIME_PNG));
+
+        const texture =  new BABYLON.Texture('data:' + texture_name, this._scene, false, false,
+            BABYLON.Texture.TRILINEAR_SAMPLINGMODE, null, null, texture_buffer, true);
+        
+        texture.uScale  = 1 / num_cols;
+        texture.vScale  = 1 / num_rows;
+        texture.uOffset = 0;
+        texture.vOffset = is_even ? 1 / num_rows : 0; // as our starting tile is on top left of the texture
+
+        // let uAnimation: BABYLON.Animation | null = null;
+        // let vAnimation: BABYLON.Animation | null = null;
+        // let uKeys: BABYLON.IAnimationKey[] = [];
+        // let vKeys: BABYLON.IAnimationKey[] = [];
+        // const num_frames = num_files;
+        // const fps = num_frames / (f04.milliseconds / 1000);
+
+        // uAnimation = new BABYLON.Animation(`${texture_name}.u`, 'uOffset', num_frames,
+        //     BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE, false);
+        
+        // if (num_rows > 1)
+        // {
+        //     vAnimation = new BABYLON.Animation(`${texture_name}.v`, 'vOffset', num_frames,
+        //         BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE, false);
+        // }
+
+        // for (let i = 0; i < num_frames; i++)
+        // {
+        //     if (i === 0)
+        //     {
+        //         uKeys.push({ frame: 0, value: texture.uOffset });
+        //         uKeys.push({ frame: 0, value: texture.vOffset });
+        //         continue;
+        //     }
+
+        //     const row = Math.floor(i / tiles);
+        //     const col = i % tiles;
+
+        //     uKeys.push({
+        //         frame: i * (num_frames / num_frames),
+        //         value: col * (1 / num_cols)
+        //     });
+
+        //     vKeys.push({
+        //         frame: i * (num_frames / num_frames),
+        //         value: is_even ? (num_rows - (row + 1)) * (1 / num_rows) : 0
+        //     });
+        // }
+
+        // uAnimation.setKeys(uKeys);
+        // texture.animations.push(uAnimation);
+
+        // if (vAnimation)
+        // {
+        //     vAnimation.setKeys(vKeys);
+        //     texture.animations.push(vAnimation);
+        // }
+
+        // this._scene.beginAnimation(texture, 0, num_frames, true);
+
+        return texture;
+    }

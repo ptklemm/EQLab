@@ -1,5 +1,5 @@
 import React                from 'react';
-import { remote, ipcRenderer } from 'electron';
+import { remote }           from 'electron';
 import DatabaseConnection   from '../../data/db';
 import { connect }          from 'react-redux';
 import { IZoneEditorState } from '../../redux/reducer';
@@ -31,13 +31,13 @@ const mapDispatchToProps: IMapDispatch = {
 
 type IZoneEditorProps = IMapState & IMapDispatch;
 
-interface IZoneEditorComponentState
+interface IState
 {
     zonelist: string[];
     selecting_zone: boolean;
 }
 
-class ZoneEditor extends React.Component<IZoneEditorProps, IZoneEditorComponentState>
+class ZoneEditor extends React.Component<IZoneEditorProps, IState>
 {
     public DB: DatabaseConnection;
     private _window: Electron.BrowserWindow;
@@ -63,13 +63,13 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IZoneEditorComponentS
         this.SelectZone = this.SelectZone.bind(this);
     }
 
-    public componentDidMount(): void
+    public async componentDidMount()
     {
         // this.DB.Connect();
         this.ListenForMenuEvents();
     }
 
-    public componentWillUnmount(): void
+    public componentWillUnmount()
     {
         // this.DB.End();
     }
