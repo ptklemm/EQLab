@@ -5,7 +5,7 @@ import {
     Route
 }                   from "react-router-dom";
 import { Provider } from 'react-redux';
-import { store }    from '../redux/store';
+import store        from '../redux/store';
 import ZoneEditor   from './ZoneEditor/ZoneEditor';
 
 export default class ViewManager extends React.Component

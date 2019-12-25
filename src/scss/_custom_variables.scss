@@ -1,5 +1,22 @@
+// Body
+// Settings for the `<body>` element.
+$body-color: #000;
+
+// Grid columns
+// Set the number of columns and specify the width of the gutters.
+$grid-gutter-width: 5px;
+
+// Typography
+// Font, line-height, and color for body text, headings, and more.
+$font-family-sans-serif: Arial, sans-serif;
+$font-family-monospace:  Consolas, monospace;
+
+$font-size-base: 0.75rem; // 12px
 
 // Modals
-
 // Padding applied to the modal body
-$modal-inner-padding:               0;
+$modal-inner-padding: 0;
+
+// Forms
+$form-group-margin-bottom: 0rem;
+$form-check-input-margin-y: .15rem;

@@ -1,6 +1,12 @@
-const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
+const fs = require('fs-extra');
 
-console.log(REACT_DEVELOPER_TOOLS);
-console.log(REDUX_DEVTOOLS);
+(async () => {
 
+    const EQ_DIR = "X:\\EQTrilogy";
 
+    let list = await fs.readdir(EQ_DIR);
+    list = list.filter(filename => filename.includes('global'));
+
+    await fs.writeJSON("./trilogy.json", list);
+
+})();

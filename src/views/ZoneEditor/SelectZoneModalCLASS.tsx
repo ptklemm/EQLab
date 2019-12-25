@@ -1,10 +1,25 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import ReactTable     from 'react-table-v6';
+import Table     from '../common/Table';
 
-export default class SelectZoneModal extends React.Component
+interface IProps
 {
-    constructor(props)
+    selectingZone: boolean;
+    close: () => void;
+    zonelist: any[];
+    selectZone: (zone_short_name: string) => void;
+}
+
+interface IState
+{
+    selectedZone: string | null;
+}
+
+export default class SelectZoneModal extends React.Component<IProps, IState>
+{
+    private columns: any[];
+
+    constructor(props: IProps)
     {
         super(props);
         this.state = {
@@ -13,7 +28,7 @@ export default class SelectZoneModal extends React.Component
 
         this.SelectZone = this.SelectZone.bind(this);
 
-        this.columns = [{
+        this.columns = React.useMemo(() => [{
             Header: 'Zone',
             accessor: 'long_name'
         },{
@@ -22,12 +37,13 @@ export default class SelectZoneModal extends React.Component
         }, {
             Header: 'Expansion',
             accessor: 'expansion'
-        }];
+        }], []);
     }
 
     SelectZone()
     {
-        this.props.selectZone(this.state.selectedZone);
+        if (this.state.selectedZone)
+            this.props.selectZone(this.state.selectedZone);
     }
 
     render()
@@ -47,34 +63,9 @@ export default class SelectZoneModal extends React.Component
                     <Modal.Title>Select Zone</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ReactTable
-                        data={this.props.zonelist}
+                    <Table
                         columns={this.columns}
-                        showPagination={false}
-                        defaultPageSize={this.props.zonelist.length}
-                        filterable={true}
-                        getTrProps={(state, row) => {
-                            return {style: {
-                                cursor: 'pointer',
-                                background: row.original.short_name === this.state.selectedZone && 'green'
-                            }}
-                        }}
-                        getTdProps={(state, row) => {
-                            return {
-                                onClick: (e, handleOriginal) => {
-                                    if (handleOriginal)
-                                        handleOriginal();
-
-                                    this.setState({ selectedZone: row.original.short_name });
-                                },
-                                onDoubleClick: (e, handleOriginal) => {
-                                    if (handleOriginal)
-                                        handleOriginal();
-
-                                    this.SelectZone(row.original.short_name);
-                                }
-                            }
-                        }}
+                        data={React.useMemo(() => this.props.zonelist, [])}
                     />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">

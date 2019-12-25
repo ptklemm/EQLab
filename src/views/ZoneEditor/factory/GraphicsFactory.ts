@@ -1,12 +1,12 @@
-import * as BABYLON from 'babylonjs';
-import _ from 'lodash';
-import Jimp from 'jimp/es';
-import toArrayBuffer from 'to-arraybuffer';
-import FileLoader from '../loaders/FileLoader';
-import { PFSFile } from '../loaders/PFS';
-import WLDFile from '../loaders/WLD';
+import * as BABYLON   from 'babylonjs';
+import _              from 'lodash';
+import Jimp           from 'jimp/es';
+import toArrayBuffer  from 'to-arraybuffer';
+import FileLoader     from '../loaders/FileLoader';
+import { PFSFile }    from '../loaders/PFS';
+import WLDFile        from '../loaders/WLD';
 import * as FRAGMENTS from '../loaders/fragments';
-import { Bone } from '../loaders/fragments/F10';
+import { Bone }       from '../loaders/fragments/F10';
 
 export default class GraphicsFactory
 {
@@ -15,19 +15,71 @@ export default class GraphicsFactory
     public static readonly PNG_SIGNATURE = 0x474E5089;
     public static readonly DDS_SIGNATURE = 0x20534444;
 
-    private _scene:       BABYLON.Scene;
-    private _file_loader: FileLoader;
-    private _textures:    PFSFile[];
+    public default_material:    BABYLON.StandardMaterial;
+    public default_mesh_length: number;
 
-    constructor(scene: BABYLON.Scene, file_loader: FileLoader)
+    public default_spawn_mesh:  BABYLON.Mesh;
+    public default_door_mesh:   BABYLON.Mesh;
+
+    private _scene:             BABYLON.Scene;
+    private _file_loader:       FileLoader;
+    private _textures:          PFSFile[];
+    private _highlight_layer:   BABYLON.HighlightLayer;
+    private _octree:            BABYLON.Octree<BABYLON.AbstractMesh> | null;
+
+    constructor(file_loader: FileLoader, scene: BABYLON.Scene, highlight_layer: BABYLON.HighlightLayer)
     {
-        this._scene       = scene;
-        this._file_loader = file_loader;
-        this._textures    = [];
+        this._file_loader     = file_loader;
+        this._scene           = scene;
+        this._textures        = [];
+        this._highlight_layer = highlight_layer;
+        this._octree          = null;
+
+        this.default_mesh_length = 5;
+
+        this.default_material = new BABYLON.StandardMaterial("DefaultMaterial", scene);
+        this._scene.defaultMaterial = this.default_material;
+
+        this.default_spawn_mesh = BABYLON.MeshBuilder.CreateCylinder("DefaultSpawnMesh", {
+            diameterTop: 0,
+            height: this.default_mesh_length,
+            diameterBottom: this.default_mesh_length * 1.1,
+            tessellation: 4
+        }, this._scene);
+
+        this.default_spawn_mesh.bakeTransformIntoVertices(BABYLON.Matrix.RotationX(BABYLON.Tools.ToRadians(90)));
+        this.default_spawn_mesh.material = this.default_material;
+        this.default_spawn_mesh.setEnabled(false);
+        this.default_spawn_mesh.freezeWorldMatrix();
+
+        this.default_door_mesh = BABYLON.MeshBuilder.CreatePlane("DefaultDoorMesh", {
+            size: this.default_mesh_length * 10,
+        }, scene);
+        this.default_door_mesh.material = this.default_material;
+        this.default_door_mesh.setEnabled(false);
+        this.default_door_mesh.freezeWorldMatrix();
     }
 
-    public async LoadZone(zone_short_name: string)
+    public set octree(octree: BABYLON.Octree<BABYLON.AbstractMesh>)
     {
+        this._octree = octree;
+    }
+
+    public InstanceSpawn(id: number): BABYLON.InstancedMesh
+    {
+        return this.default_spawn_mesh.createInstance(`spawn_${id}`);
+    }
+
+    public async LoadGlobalGraphics()
+    {
+
+    }
+
+    public async LoadZone(zone_short_name: string | null)
+    {
+        if (!zone_short_name)
+            return null;
+
         // Load Archives
         const archives = await this._file_loader.LoadZoneArchives(zone_short_name);
 
@@ -54,6 +106,10 @@ export default class GraphicsFactory
         // const character_WLD = new WLDFile(character_WLD_data).Load();
         // this.CreateCharacters(characterWLD);
 
+        // Read zone_chr.txt
+
+        this._textures = [];
+
         return zone_model;
     }
 
@@ -68,10 +124,12 @@ export default class GraphicsFactory
         const f36s = zoneWLD.GetFragmentsByType(0x36) as FRAGMENTS.F36[];
 
         const model = this.CreateStaticModel("ZoneModel", f36s, f31s[0].name);
+        BABYLON.Tags.EnableFor(model);
+        BABYLON.Tags.AddTagsTo(model, "ZoneModel");
 
         return model;
     }
-
+    
     public async CreateZoneObjects(obj_WLD: WLDFile, placements_WLD: WLDFile): Promise<void>
     {
         const f31s = obj_WLD.GetFragmentsByType(0x31) as FRAGMENTS.F31[];
