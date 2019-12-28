@@ -4,8 +4,43 @@ html, body {
     margin: 0;
 }
 
+fieldset {
+    margin-top: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+legend {
+    font-size: 0.75rem;
+    font-weight: bold;
+    width: inherit;
+    margin-left: 10px;
+    padding: 0 5px;
+}
+
+.col-form-label {
+    padding-top: 0;
+    padding-bottom: calc(0.375rem + 1px);
+    margin-bottom: 0;
+    font-size: inherit;
+    line-height: 1.5;
+}
+
+.form-control-sm {
+    height: calc(1.5em + 0.1rem + 2px);
+    padding: 0.25rem;
+    font-size: 0.65625rem;
+    line-height: 1.5;
+    border-radius: rem;
+}
+
+div.list-group-item {
+    padding: 5px
+}
+
 table.eqlab-table {
-    border: 1px solid #000000;
+    border-style: hidden;
+    // border: 1px solid #000000;
     width: 100%;
     text-align: left;
     border-collapse: collapse;

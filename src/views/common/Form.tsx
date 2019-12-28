@@ -1,67 +1,55 @@
 import React                 from 'react';
-import { Col, Form, Button } from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 
-const FormGroup = (props) =>
+export const CCol = (props) =>
 {
-    let className;
-
-    if (props.center === 'true' || props.alignstart === 'true')
-    {
-        className = 'd-flex';
-
-        if (props.center === 'true') { className += ' justify-content-center'; }
-        if (props.alignstart === 'true') { className += ' align-items-start'; }
-    }
-
-    return (
-        <Form.Group
-            as={Col}
-            md={props.md}
-            className={className ? className : null}
-            { ...props }
-        >
-            {props.children}
-        </Form.Group>
-    );
+    return <Col style={{ display: 'flex', justifyContent: 'center' }} {...props}>
+              {props.children}
+           </Col>
 }
 
 export const Checkbox = ({input, meta, md, ...props}) =>
 {
+    return <Form.Check type="checkbox" checked={!!input.value} {...input} {...props} />
+}
+
+export const HInput = ({input, meta, md, ...props}) =>
+{
     return (
-        <FormGroup md={md} center={props.center} alignstart={props.alignstart} style={{ ...props.style }}>
-            <Form.Check type="checkbox" inline checked={input.value} {...input} {...props} />
-        </FormGroup>
+        <Col md={props.col || null}>
+            <Form.Group as={Row}>
+                <Form.Label column md={props.labelCol || 4} style={{ textAlign: 'right' }}>{props.label}</Form.Label>
+                <Col>
+                    <Form.Control
+                        size="sm"
+                        type={props.type || "text"}
+                        value={input.value}
+                        isInvalid={meta.invalid}
+                        {...input} 
+                        {...props}
+                    />
+                    <Form.Control.Feedback type="invalid">{meta.error}</Form.Control.Feedback>
+                </Col>
+            </Form.Group>
+        </Col>
     );
 }
 
-export const Input = ({input, meta, md, ...props}) =>
+export const HSelect = ({input, meta, md, ...props}) =>
 {
     return (
-        <FormGroup md={md} center={props.center} style={{ ...props.style }}>
-            <Form.Control
-                type="text" 
-                size="sm" 
-                value={input.value}
-                isInvalid={meta.invalid}
-                {...input} 
-                {...props}
-            />
-            <Form.Control.Feedback type="invalid">{meta.error}</Form.Control.Feedback>
-        </FormGroup>
-    );
-}
-
-export const Select = ({input, meta, md, ...props}) =>
-{
-    return (
-        <FormGroup md={md} center={props.center} style={{ ...props.style }}>
-            <Form.Control as="select" size="sm" value={input.value} {...input} {...props}>
-                <option value=""></option>
-                <option value="DEBUG">DEBUG</option>
-                <option value="INFO">INFO</option>
-                <option value="WARN">WARN</option>
-                <option value="ERROR">ERROR</option>
-            </Form.Control>
-        </FormGroup>
+        <Col md={props.col || null}>
+            <Form.Group as={Row}>
+                <Form.Label column md={props.labelCol || 4} style={{ textAlign: 'right' }}>{props.label}</Form.Label>
+                <Col>
+                    <Form.Control style={{ padding: 2 }} as="select" size="sm" value={input.value} {...input} {...props}>
+                        {props.usePlaceholder && <option key={0} value={0}></option>}
+                        {props.options.map((option, index) => {
+                            return <option key={index} value={option.value}>{option.label}</option>
+                        })}
+                    </Form.Control>
+                </Col>
+            </Form.Group>
+        </Col>
     );
 }

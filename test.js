@@ -1,12 +1,9 @@
-const fs = require('fs-extra');
 
-(async () => {
+const num = 25553333.3634534;
 
-    const EQ_DIR = "X:\\EQTrilogy";
+let test = Number(Number(num.toPrecision(14)).toFixed(6))
 
-    let list = await fs.readdir(EQ_DIR);
-    list = list.filter(filename => filename.includes('global'));
+let test2 = Math.trunc(num.toPrecision(11))
 
-    await fs.writeJSON("./trilogy.json", list);
 
-})();
+console.log(test2)

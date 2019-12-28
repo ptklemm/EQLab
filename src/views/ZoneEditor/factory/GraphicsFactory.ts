@@ -18,27 +18,35 @@ export default class GraphicsFactory
     public default_material:    BABYLON.StandardMaterial;
     public default_mesh_length: number;
 
-    public default_spawn_mesh:  BABYLON.Mesh;
-    public default_door_mesh:   BABYLON.Mesh;
-
+    // public default_blocked_spell_mesh: BABYLON.Mesh; //box
+    public default_door_mesh:   BABYLON.Mesh; //box
+    // public default_grid_mesh: BABYLON.Mesh; //sphere
+    // public default_ground_spawn_mesh: BABYLON.Mesh; //box and/or line?
+    public default_spawn_mesh:  BABYLON.Mesh; //pyramid
+    // public default_trap_mesh: BABYLON.Mesh; //cylinder
+    
     private _scene:             BABYLON.Scene;
     private _file_loader:       FileLoader;
     private _textures:          PFSFile[];
-    private _highlight_layer:   BABYLON.HighlightLayer;
-    private _octree:            BABYLON.Octree<BABYLON.AbstractMesh> | null;
 
-    constructor(file_loader: FileLoader, scene: BABYLON.Scene, highlight_layer: BABYLON.HighlightLayer)
+    constructor(file_loader: FileLoader, scene: BABYLON.Scene)
     {
         this._file_loader     = file_loader;
         this._scene           = scene;
         this._textures        = [];
-        this._highlight_layer = highlight_layer;
-        this._octree          = null;
 
         this.default_mesh_length = 5;
 
         this.default_material = new BABYLON.StandardMaterial("DefaultMaterial", scene);
+        this.default_material.backFaceCulling = false;
         this._scene.defaultMaterial = this.default_material;
+
+        this.default_door_mesh = BABYLON.MeshBuilder.CreateBox("DefaultDoorMesh", {
+            size: this.default_mesh_length * 2,
+        }, scene);
+        this.default_door_mesh.material = this.default_material;
+        this.default_door_mesh.setEnabled(false);
+        this.default_door_mesh.freezeWorldMatrix();
 
         this.default_spawn_mesh = BABYLON.MeshBuilder.CreateCylinder("DefaultSpawnMesh", {
             diameterTop: 0,
@@ -46,28 +54,10 @@ export default class GraphicsFactory
             diameterBottom: this.default_mesh_length * 1.1,
             tessellation: 4
         }, this._scene);
-
         this.default_spawn_mesh.bakeTransformIntoVertices(BABYLON.Matrix.RotationX(BABYLON.Tools.ToRadians(90)));
         this.default_spawn_mesh.material = this.default_material;
         this.default_spawn_mesh.setEnabled(false);
         this.default_spawn_mesh.freezeWorldMatrix();
-
-        this.default_door_mesh = BABYLON.MeshBuilder.CreatePlane("DefaultDoorMesh", {
-            size: this.default_mesh_length * 10,
-        }, scene);
-        this.default_door_mesh.material = this.default_material;
-        this.default_door_mesh.setEnabled(false);
-        this.default_door_mesh.freezeWorldMatrix();
-    }
-
-    public set octree(octree: BABYLON.Octree<BABYLON.AbstractMesh>)
-    {
-        this._octree = octree;
-    }
-
-    public InstanceSpawn(id: number): BABYLON.InstancedMesh
-    {
-        return this.default_spawn_mesh.createInstance(`spawn_${id}`);
     }
 
     public async LoadGlobalGraphics()
@@ -161,6 +151,9 @@ export default class GraphicsFactory
                 model = this.CreateAnimatedModel(f14.name, f10);
             }
 
+            BABYLON.Tags.EnableFor(model);
+            BABYLON.Tags.AddTagsTo(model, "ObjectPrototype");
+
             model.freezeWorldMatrix();
             model.setEnabled(false);
 
@@ -185,7 +178,7 @@ export default class GraphicsFactory
                 const scale_y = f15.scale_y;
                 const scale_z = f15.scale_z;
 
-                const instance = model.createInstance(`${f15.ref}_${i}`);
+                const instance = model.createInstance(`object_${f15.ref}`);
                 instance.position = new BABYLON.Vector3(x, y, z);
                 instance.scaling = new BABYLON.Vector3(scale_x, scale_y, scale_z);
                 instance.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(rotate_y_radians, rotate_z_radians, rotate_x_radians);
@@ -224,7 +217,7 @@ export default class GraphicsFactory
         const material = new BABYLON.StandardMaterial(f30.name, this._scene);
         BABYLON.Tags.EnableFor(material);
 
-        const { invisible, masked, particle } = f30.visibility;
+        const { invisible, masked, particle, transparent } = f30.visibility;
 
         let texture: BABYLON.Texture | null = null;
 
@@ -255,7 +248,7 @@ export default class GraphicsFactory
             material.diffuseTexture = texture;
             material.diffuseTexture.hasAlpha = true;
 
-            if (particle)
+            if (particle || transparent)
             {
                 material.opacityTexture = material.diffuseTexture;
                 material.alphaMode = BABYLON.Engine.ALPHA_ADD
@@ -720,6 +713,66 @@ export default class GraphicsFactory
             uvs,
             submeshes
         }
+    }
+
+    public CreateZoneAxes(scene: BABYLON.Scene, size: number): BABYLON.TransformNode
+    {
+        const makeTextPlane = (text: string, color: string, size: number) => {
+            const dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+            dynamicTexture.hasAlpha = true;
+            dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
+
+            const plane = BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
+
+            const material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+            material.backFaceCulling = false;
+            material.specularColor = new BABYLON.Color3(0, 0, 0);
+            material.diffuseTexture = dynamicTexture;
+
+            plane.material = material;
+
+            return plane;
+        };
+
+        const parent = new BABYLON.TransformNode("WorldAxes", scene);
+        
+        const axisX = BABYLON.Mesh.CreateLines("WorldAxisX", [ 
+          BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0), 
+          new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
+          ], scene
+        );
+        axisX.color = new BABYLON.Color3(1, 0, 0);
+        axisX.setParent(parent);
+
+        const xChar = makeTextPlane("X", "red", size / 10);
+        xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
+        xChar.setParent(parent);
+
+        const axisY = BABYLON.Mesh.CreateLines("WorldAxisY", [
+            BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( -0.05 * size, size * 0.95, 0), 
+            new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3( 0.05 * size, size * 0.95, 0)
+            ], scene
+        );
+        axisY.color = new BABYLON.Color3(0, 1, 0);
+        axisY.setParent(parent);
+
+        const yChar = makeTextPlane("Y", "green", size / 10);
+        yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
+        yChar.setParent(parent);
+
+        const axisZ = BABYLON.Mesh.CreateLines("WorldAxisZ", [
+            BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0 , -0.05 * size, size * 0.95),
+            new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3( 0, 0.05 * size, size * 0.95)
+            ], scene
+        );
+        axisZ.color = new BABYLON.Color3(0, 0, 1);
+        axisZ.setParent(parent);
+
+        const zChar = makeTextPlane("Z", "blue", size / 10);
+        zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
+        zChar.setParent(parent);
+
+        return parent;
     }
 
     private GetMultiMaterialByName(name: string): BABYLON.MultiMaterial | undefined

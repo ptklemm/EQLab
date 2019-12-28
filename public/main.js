@@ -134,14 +134,37 @@ class MainProcess
         }, { 
             role: 'editMenu'
         }, {
-            id: 'debug',
-            label: 'Debug',
+            label: 'View',
             submenu: [{
-                role: 'reload'
+                id: 'doors',
+                label: 'Doors',
+                type: 'submenu',
+                submenu: [{
+                    label: 'Doors',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Doors', menuItem.checked); }
+                }, {
+                    label: 'Door Labels',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Door Labels', menuItem.checked); }
+                }]
             }, {
-                role: 'forceReload'
-            }, {
-                role: 'toggleDevTools'
+                id: 'spawns',
+                label: 'Spawns',
+                type: 'submenu',
+                submenu: [{
+                    label: 'Spawns',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Spawns', menuItem.checked); }
+                }, {
+                    label: 'Spawn Labels',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Spawn Labels', menuItem.checked); }
+                }]
             }]
         }];
 
@@ -194,8 +217,14 @@ class MainProcess
         });
     }
 
-    HandleOpenZone(){ this.zone_editor_window.send('open-zone'); }
+    // File Menu
+    HandleOpenZone() { this.zone_editor_window.webContents.send('open-zone'); }
 
+    // View Menu
+    ToggleEntityVisibility(entity_type, value)
+    {
+        this.zone_editor_window.webContents.send('toggle-entity-visibility', entity_type, value);
+    }
 }
 
 (() => {
