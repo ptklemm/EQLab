@@ -11,18 +11,18 @@ import {
 import { IReduxState }         from '../../redux/store';
 import * as ACTION             from '../../redux/actions';
 import DatabaseConnection      from '../../database/Database';
-import FileLoader              from './loaders/FileLoader';
-import GraphicsFactory         from './factory/GraphicsFactory';
-import { EQEntity }            from './entity/Entity';
+import FileLoader              from './file/FileLoader';
+import GraphicsFactory         from './graphics/GraphicsFactory';
+import { EQEntity, ISpawnData }            from './entity/Entity';
 import EntityManager           from './entity/EntityManager';
-import SelectZoneModal         from './SelectZoneModal';
-import OptionsPane             from './OptionsPane';
-import ExplorerPane            from './ExplorerPane';
-import EntityPanel             from './EntityPanel/EntityPanel';
 import {
     IZoneListEntry,
     IZoneGeometry
 }                              from './types/types';
+import SelectZoneModal         from './SelectZoneModal';
+import OptionsPane             from './OptionsPane';
+import ExplorerPane            from './ExplorerPane';
+import EntityPanel             from './EntityPanel/EntityPanel';
 
 // const IN_DEVELOPMENT: boolean = remote.getGlobal('IN_DEVELOPMENT');
 // const APP_NAME:       string  = remote.getGlobal('APP_NAME');
@@ -47,15 +47,17 @@ const mapStateToProps = (state: IReduxState): IMapState => ({
 
 interface IMapDispatch
 {
-    setOptions:      (options: IOptionsState) => void;
-    setZonelist:     (zonelist: any[])        => void;
-    setZonename:     (zone_name: string)      => void;
+    setOptions:  (options: IOptionsState) => void;
+    setZonelist: (zonelist: any[])        => void;
+    setZonename: (zone_name: string)      => void;
+    updateSpawn: (spawn: ISpawnData)      => void;
 }
 
 const mapDispatchToProps: IMapDispatch = {
-    setOptions:      (options: IOptionsState) => ({ type: ACTION.SET_OPTIONS, options }),
-    setZonelist:     (zonelist: any[])        => ({ type: ACTION.SET_ZONELIST,  zonelist }),
-    setZonename:     (zone_name: string)      => ({ type: ACTION.SET_ZONE_NAME, zone_name })
+    setOptions:  (options: IOptionsState) => ({ type: ACTION.SET_OPTIONS, options }),
+    setZonelist: (zonelist: any[])        => ({ type: ACTION.SET_ZONELIST,  zonelist }),
+    setZonename: (zone_name: string)      => ({ type: ACTION.SET_ZONE_NAME, zone_name }),
+    updateSpawn: (spawn: ISpawnData)      => ({ type: ACTION.UPDATE_SPAWN, spawn })
 }
 
 type IZoneEditorProps = IMapState & IMapDispatch;
@@ -75,7 +77,7 @@ interface IState
     show_invisible_walls: boolean;
     show_wireframe:       boolean;
     show_bounding_boxes:  boolean;
-    show_axis:            boolean;
+    show_zone_axes:       boolean;
     show_facet_normals:   boolean;
     objects:              string[];
     materials:            string[];
@@ -111,16 +113,16 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             canvas_height:         window.innerHeight,
             selecting_zone:        false,
             scene_loaded:          false,
-            camera_speed:          100,
+            camera_speed:          500,
             light_intensity:       100,
             clip_top_init:         10000,
             clip_bottom_init:     -10000,
             clip_top:              10000,
             clip_bottom:          -10000,
-            show_invisible_walls:  true,
+            show_invisible_walls:  false,
             show_wireframe:        false,
             show_bounding_boxes:   false,
-            show_axis:             false,
+            show_zone_axes:        true,
             show_facet_normals:    false,
             objects:               [],
             materials:             [],
@@ -136,50 +138,49 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             database: 'nostalgia_eq'
         });
 
-        this.file_loader = new FileLoader('X:\\EQCLIENT');
+        this.file_loader      = new FileLoader('X:\\EQCLIENT');
 
-        this.canvas             = null;
-        this.engine             = null;
-        this.scene              = null;
-        this.octree             = null;
-        this.light              = null;
-        this.camera             = null;
-        this.zone_axes          = null;
-        this.facet_normals      = null;
+        this.canvas           = null;
+        this.engine           = null;
+        this.scene            = null;
+        this.octree           = null;
+        this.light            = null;
+        this.camera           = null;
+        this.zone_axes        = null;
+        this.facet_normals    = null;
         
-        this.graphics_factory   = null;
-        this.entity_manager     = null;
+        this.graphics_factory = null;
+        this.entity_manager   = null;
 
-        this.zone_model         = null;
-        this.zone_geometry      = null;
+        this.zone_model       = null;
+        this.zone_geometry    = null;
  
-        this.OnSecondaryPaneSizeChange = this.OnSecondaryPaneSizeChange.bind(this);
-
-        this.CloseSelectZoneModal = this.CloseSelectZoneModal.bind(this);
-        this.SelectZone = this.SelectZone.bind(this);
-        this.ChangeCameraSpeed = this.ChangeCameraSpeed.bind(this);
-        this.ChangeClipPlanes= this.ChangeClipPlanes.bind(this);
-        this.ChangeLightIntensity = this.ChangeLightIntensity.bind(this);
-        this.ToggleInvisibleWalls = this.ToggleInvisibleWalls.bind(this);
-        this.ToggleSafePoint = this.ToggleSafePoint.bind(this);
-        this.ToggleUnderworldPlane = this.ToggleUnderworldPlane.bind(this);
-        this.ToggleWireframe = this.ToggleWireframe.bind(this);
-        this.ToggleBoundingBoxes = this.ToggleBoundingBoxes.bind(this);
-        this.ToggleFacetNormals = this.ToggleFacetNormals.bind(this);
-        this.ToggleZoneObject = this.ToggleZoneObject.bind(this);
-        this.ToggleMaterial = this.ToggleMaterial.bind(this);
-        this.HandleFormSave = this.HandleFormSave.bind(this);
-        this.HandleFormReset = this.HandleFormReset.bind(this);
-        this.HandleFormClose = this.HandleFormClose.bind(this);
-        this.HandleFormXChange = this.HandleFormXChange.bind(this);
-        this.HandleFormYChange = this.HandleFormYChange.bind(this);
-        this.HandleFormZChange = this.HandleFormZChange.bind(this);
-        this.HandleFormHeadingChange = this.HandleFormHeadingChange.bind(this);
-        this.ToggleRoamCylinder = this.ToggleRoamCylinder.bind(this);
-        this.ToggleRoamBox = this.ToggleRoamBox.bind(this);
+        this.OnSecondaryPaneSizeChange    = this.OnSecondaryPaneSizeChange.bind(this);
+        this.CloseSelectZoneModal         = this.CloseSelectZoneModal.bind(this);
+        this.SelectZone                   = this.SelectZone.bind(this);
+        this.ChangeCameraSpeed            = this.ChangeCameraSpeed.bind(this);
+        this.ChangeClipPlanes             = this.ChangeClipPlanes.bind(this);
+        this.ChangeLightIntensity         = this.ChangeLightIntensity.bind(this);
+        this.ToggleInvisibleWalls         = this.ToggleInvisibleWalls.bind(this);
+        this.ToggleSafePoint              = this.ToggleSafePoint.bind(this);
+        this.ToggleUnderworldPlane        = this.ToggleUnderworldPlane.bind(this);
+        this.ToggleWireframe              = this.ToggleWireframe.bind(this);
+        this.ToggleBoundingBoxes          = this.ToggleBoundingBoxes.bind(this);
+        this.ToggleFacetNormals           = this.ToggleFacetNormals.bind(this);
+        this.ToggleZoneObject             = this.ToggleZoneObject.bind(this);
+        this.ToggleMaterial               = this.ToggleMaterial.bind(this);
+        this.HandleFormSave               = this.HandleFormSave.bind(this);
+        this.HandleFormReset              = this.HandleFormReset.bind(this);
+        this.HandleFormClose              = this.HandleFormClose.bind(this);
+        this.HandleFormXChange            = this.HandleFormXChange.bind(this);
+        this.HandleFormYChange            = this.HandleFormYChange.bind(this);
+        this.HandleFormZChange            = this.HandleFormZChange.bind(this);
+        this.HandleFormHeadingChange      = this.HandleFormHeadingChange.bind(this);
+        this.ToggleRoamCylinder           = this.ToggleRoamCylinder.bind(this);
+        this.ToggleRoamBox                = this.ToggleRoamBox.bind(this);
         this.HandleFormRoamDistanceChange = this.HandleFormRoamDistanceChange.bind(this);
-        this.HandleFormRoamLimitsChange = this.HandleFormRoamLimitsChange.bind(this);
-        this.ToggleSpawngroupExpanded = this.ToggleSpawngroupExpanded.bind(this);
+        this.HandleFormRoamLimitsChange   = this.HandleFormRoamLimitsChange.bind(this);
+        this.ToggleSpawngroupExpanded     = this.ToggleSpawngroupExpanded.bind(this);
     }
 
     public async componentDidMount()
@@ -357,6 +358,9 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         
         // Load Global files (graphics factory)
         this.zone_model = await this.graphics_factory.LoadZone(this.props.zone_name) as BABYLON.Mesh;
+        
+        if (this.state.show_invisible_walls === false)
+            this._ToggleInvisibleWalls(false, scene);
 
         this.setState({
             objects:   this.GetObjectMeshNames(scene),
@@ -365,6 +369,9 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
 
         this.zone_geometry = this.CalculateZoneGeometry(this.zone_model);
         this.zone_axes = this.graphics_factory.CreateZoneAxes(scene, 300);
+
+        if (this.state.show_zone_axes === false)
+            this._ToggleZoneAxes(false);
 
         this.graphics_factory.default_mesh_length = Math.trunc(Math.sqrt(Math.log(this.zone_geometry.volume)) * 1);
 
@@ -617,12 +624,16 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
     {
         if (this.scene)
         {
-            this.scene.getMaterialByTags("Invisible", (material) => {
-                event.target.checked === true ? material.alpha = 0.1 : material.alpha = 0.0;
-            });
-
+            this._ToggleInvisibleWalls(event.target.checked, this.scene);
             this.setState({ show_invisible_walls: event.target.checked });
         }
+    }
+
+    _ToggleInvisibleWalls(value: boolean, scene: BABYLON.Scene): void
+    {
+        scene.getMaterialByTags("Invisible", (material) => {
+            value === true ? material.alpha = 0.1 : material.alpha = 0.0;
+        });
     }
 
     ToggleSafePoint(event: React.ChangeEvent<HTMLInputElement>): void
@@ -659,6 +670,14 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         {
             this.scene.forceShowBoundingBoxes = event.target.checked;
             this.setState({ show_bounding_boxes: event.target.checked });
+        }
+    }
+
+    _ToggleZoneAxes(value: boolean): void
+    {
+        if (this.zone_axes)
+        {
+            this.zone_axes.setEnabled(value);
         }
     }
 
@@ -720,12 +739,21 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
     // Entity Form
     async HandleFormSave(entity_type: string, data: any): Promise<void>
     {
-        let result: any = null;
-
         switch (entity_type)
         {
             case EQEntity.TYPE_SPAWN:
-                result = await this.DB.Spawn2.ZoneEditorSave(data);
+                if (data.spawngroup)
+                {
+                    remote.dialog.showMessageBox(this._window, {
+                        type: 'warning',
+                        message: 'Changing a spawngroup will apply to all spawns with this spawngroup. Proceed?',
+                        buttons: ['OK', 'Cancel']
+                    })
+                    .then((res) => {
+                        console.log(res.response);
+                    })
+                }
+                // await this.entity_manager?.UpdateSpawn(data);
                 break;
             default:
                 return;
@@ -864,8 +892,9 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
                                 changeClipPlanes={this.ChangeClipPlanes}
                                 showInvisibleWalls={this.state.show_invisible_walls}
                                 toggleInvisibleWalls={this.ToggleInvisibleWalls}
-                                options={this.props.options}
+                                showSafePoint={this.props.options.show_safe_point}
                                 toggleSafePoint={this.ToggleSafePoint}
+                                showUnderworldPlane={this.props.options.show_underworld_plane}
                                 toggleUnderworldPlane={this.ToggleUnderworldPlane}
                                 objects={this.state.objects}
                                 toggleObject={this.ToggleZoneObject}

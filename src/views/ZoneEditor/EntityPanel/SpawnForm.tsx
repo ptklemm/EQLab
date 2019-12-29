@@ -1,4 +1,4 @@
-import React from 'react';
+import React                              from 'react';
 import {
     Row,
     Col,
@@ -6,8 +6,8 @@ import {
     Accordion,
     Card,
     Button
-} from 'react-bootstrap';
-import { connect } from 'react-redux';
+}                                         from 'react-bootstrap';
+import { connect }                        from 'react-redux';
 import {
     reduxForm,
     InjectedFormProps,
@@ -15,10 +15,11 @@ import {
     Field,
     FormSection,
     FieldArray
-} from 'redux-form';
+}                                          from 'redux-form';
+import { diff }                            from 'deep-object-diff';
 import { CCol, Checkbox, HInput, HSelect } from '../../common/Form';
-import { ISpawnData, EQEntity } from '../entity/Entity';
-import { DESPAWN_TYPES } from '../../../common/constants';
+import { ISpawnData, EQEntity }            from '../entity/Entity';
+import { DESPAWN_TYPES }                   from '../../../common/constants';
 
 interface ICustomProps
 {
@@ -74,50 +75,52 @@ class SpawnForm extends React.Component<ISpawnFormProps>
 
     private HandleRoamLimitsChange(event: any): void
     {
+        const value = Number(event.target.value);
+        const min_x = Number(this.props.min_x);
+        const max_x = Number(this.props.max_x);
+        const min_y = Number(this.props.min_y);
+        const max_y = Number(this.props.max_y);
+
         switch (event.target.id)
         {
             case 'min_x':
-                this.props.handleRoamLimitsChange(
-                    Number(event.target.value),
-                    Number(this.props.max_x),
-                    Number(this.props.min_y),
-                    Number(this.props.max_y)
-                );
+                this.props.handleRoamLimitsChange(value, max_x, min_y, max_y);
                 break;
             case 'max_x':
-                this.props.handleRoamLimitsChange(
-                    Number(this.props.min_x),
-                    Number(event.target.value),
-                    Number(this.props.min_y),
-                    Number(this.props.max_y)
-                );
+                this.props.handleRoamLimitsChange(min_x, value, min_y, max_y);
                 break;
             case 'min_y':
-                this.props.handleRoamLimitsChange(
-                    Number(this.props.min_x),
-                    Number(this.props.max_x),
-                    Number(event.target.value),
-                    Number(this.props.max_y)
-                );
+                this.props.handleRoamLimitsChange(min_x, max_x, value, max_y);
                 break;
             case 'max_y':
-                this.props.handleRoamLimitsChange(
-                    Number(this.props.min_x),
-                    Number(this.props.max_x),
-                    Number(this.props.min_y),
-                    Number(event.target.value)
-                );
+                this.props.handleRoamLimitsChange(min_x, max_x, min_y, value);
                 break;
             default:
                 break;
         }
     }
 
-    private SubmitForm(data: ISpawnData, dispatch, props): Promise<void>
+    private SubmitForm(values: ISpawnData, dispatch, props): Promise<void>
     {
         return new Promise((resolve, reject) => {
-            console.log(props);
-            console.log('validating form...');
+            const delta: any = diff(props.initialValues, values);
+
+            let spawn_delta = { ...delta, id: values.id }
+            let spawngroup_delta = null;
+
+            // Attached spawngroup was changed
+            if (spawn_delta.spawngroup)
+            {
+                spawngroup_delta = { ...spawn_delta.spawngroup, id: values.spawngroupID }
+                delete spawn_delta.spawngroup;
+
+                // ***todo check for changes in spawngroup.spawnentries/npcs
+            }
+
+            const data = {
+                spawn: spawn_delta,
+                spawngroup: spawngroup_delta
+            }
 
             this.props.saveForm(EQEntity.TYPE_SPAWN, data);
             // Validate
@@ -237,107 +240,105 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                             </Row>
                         </div>
                         <Accordion activeKey={this.props.spawngroupExpanded ? "0" : ""}>
-                            <FormSection name="spawngroup">
-                                <Card style={{ borderRight: 'none', borderLeft: 'none', borderBottom: 'none' }}>
-                                    <Card.Header>
-                                        <Row>
-                                            <Col md={1}>
-                                                <Accordion.Toggle
-                                                    as={Button}
-                                                    size="sm"
-                                                    variant="link"
-                                                    eventKey="0"
-                                                    onClick={this.props.toggleSpawngroupExpanded}
-                                                >
-                                                {this.props.spawngroupExpanded ? "Collapse" : "Expand"}
-                                                </Accordion.Toggle>
-                                            </Col>
-                                            <Field disabled component={HInput} col={3} name="id" label="SG ID" />
-                                            <Field component={HInput} col={5} name="name" label="Spawngroup" />
-                                            <Field component={HInput} col={3} type="number" name="spawn_limit" label="Limit" />
-                                        </Row>
-                                    </Card.Header>
-                                    <Accordion.Collapse eventKey="0">
-                                        <Card.Body style={{ padding: 5 }}>
-                                                <Row>
-                                                    <Col md={4}>
-                                                        <fieldset className="border">
-                                                        <legend>Despawn</legend>
-                                                            <Row>
-                                                                <Field component={HSelect} options={DESPAWN_TYPES} name="despawn" label="Type" />
-                                                            </Row>
-                                                            <Row>
-                                                                <Field component={HInput} type="number" name="despawn_timer" label="Timer" />
-                                                            </Row>
-                                                        </fieldset>
-                                                    </Col>
-                                                    <Col>
-                                                        <fieldset className="border">
-                                                        <legend>Roam</legend>
-                                                            <Row>
-                                                                <Field component={HInput} type="number" name="delay" label="Delay" />
-                                                                <Field
-                                                                    component={HInput}
-                                                                    type="number"
-                                                                    name="dist"
-                                                                    label="Distance"
-                                                                    onChange={this.props.handleRoamDistanceChange}
-                                                                />
-                                                                <Col md={4} />
-                                                            </Row>
-                                                            <Row>
-                                                                <Field component={HInput} type="number" name="mindelay" label="MinDelay" />
-                                                                <Field
-                                                                    component={HInput}
-                                                                    type="number"
-                                                                    id="min_x"
-                                                                    name="min_x"
-                                                                    label="Min X"
-                                                                    onChange={this.HandleRoamLimitsChange}
-                                                                />
-                                                                <Field
-                                                                    component={HInput}
-                                                                    id="max_x"
-                                                                    type="number"
-                                                                    name="max_x"
-                                                                    label="Max X"
-                                                                    onChange={this.HandleRoamLimitsChange}
-                                                                />
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md={4} />
-                                                                <Field 
-                                                                    component={HInput}
-                                                                    type="number"
-                                                                    id="min_y"
-                                                                    name="min_y"
-                                                                    label="Min Y"
-                                                                    onChange={this.HandleRoamLimitsChange}
-                                                                />
-                                                                <Field
-                                                                    component={HInput}
-                                                                    type="number"
-                                                                    id="max_y"
-                                                                    name="max_y"
-                                                                    label="Max Y"
-                                                                    onChange={this.HandleRoamLimitsChange}
-                                                                />
-                                                            </Row>
-                                                        </fieldset>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col>
-                                                        <fieldset className="border" style={{ padding: 0 }}>
-                                                        <legend>Spawn Entries</legend>
-                                                            <FieldArray name="spawnentries" component={SpawnEntriesTable} />
-                                                        </fieldset>
-                                                    </Col>
-                                                </Row>
-                                        </Card.Body>
-                                    </Accordion.Collapse>
-                                </Card>
-                            </FormSection>
+                            <Card style={{ borderRight: 'none', borderLeft: 'none', borderBottom: 'none' }}>
+                                <Card.Header>
+                                    <Row>
+                                        <Col md={1}>
+                                            <Accordion.Toggle
+                                                as={Button}
+                                                size="sm"
+                                                variant="link"
+                                                eventKey="0"
+                                                onClick={this.props.toggleSpawngroupExpanded}
+                                            >
+                                            {this.props.spawngroupExpanded ? "Collapse" : "Expand"}
+                                            </Accordion.Toggle>
+                                        </Col>
+                                        <Field disabled component={HInput} col={3} name="spawngroupID" label="SG ID" />
+                                        <Field component={HInput} col={5} name="spawngroup.name" label="Spawngroup" />
+                                        <Field component={HInput} col={3} type="number" name="spawngroup.spawn_limit" label="Limit" />
+                                    </Row>
+                                </Card.Header>
+                                <Accordion.Collapse eventKey="0">
+                                    <Card.Body style={{ padding: 5 }}>
+                                            <Row>
+                                                <Col md={4}>
+                                                    <fieldset className="border">
+                                                    <legend>Despawn</legend>
+                                                        <Row>
+                                                            <Field component={HSelect} options={DESPAWN_TYPES} name="spawngroup.despawn" label="Type" />
+                                                        </Row>
+                                                        <Row>
+                                                            <Field component={HInput} type="number" name="spawngroup.despawn_timer" label="Timer" />
+                                                        </Row>
+                                                    </fieldset>
+                                                </Col>
+                                                <Col>
+                                                    <fieldset className="border">
+                                                    <legend>Roam</legend>
+                                                        <Row>
+                                                            <Field component={HInput} type="number" name="spawngroup.delay" label="Delay" />
+                                                            <Field
+                                                                component={HInput}
+                                                                type="number"
+                                                                name="spawngroup.dist"
+                                                                label="Distance"
+                                                                onChange={this.props.handleRoamDistanceChange}
+                                                            />
+                                                            <Col md={4} />
+                                                        </Row>
+                                                        <Row>
+                                                            <Field component={HInput} type="number" name="spawngroup.mindelay" label="MinDelay" />
+                                                            <Field
+                                                                component={HInput}
+                                                                type="number"
+                                                                id="min_x"
+                                                                name="spawngroup.min_x"
+                                                                label="Min X"
+                                                                onChange={this.HandleRoamLimitsChange}
+                                                            />
+                                                            <Field
+                                                                component={HInput}
+                                                                id="max_x"
+                                                                type="number"
+                                                                name="spawngroup.max_x"
+                                                                label="Max X"
+                                                                onChange={this.HandleRoamLimitsChange}
+                                                            />
+                                                        </Row>
+                                                        <Row>
+                                                            <Col md={4} />
+                                                            <Field 
+                                                                component={HInput}
+                                                                type="number"
+                                                                id="min_y"
+                                                                name="spawngroup.min_y"
+                                                                label="Min Y"
+                                                                onChange={this.HandleRoamLimitsChange}
+                                                            />
+                                                            <Field
+                                                                component={HInput}
+                                                                type="number"
+                                                                id="max_y"
+                                                                name="spawngroup.max_y"
+                                                                label="Max Y"
+                                                                onChange={this.HandleRoamLimitsChange}
+                                                            />
+                                                        </Row>
+                                                    </fieldset>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <fieldset className="border" style={{ padding: 0 }}>
+                                                    <legend>Spawn Entries</legend>
+                                                        <FieldArray name="spawngroup.spawnentries" component={SpawnEntriesTable} />
+                                                    </fieldset>
+                                                </Col>
+                                            </Row>
+                                    </Card.Body>
+                                </Accordion.Collapse>
+                            </Card>
                         </Accordion>
                     </Card.Body>
                     <Card.Footer style={{ padding: 5, display: 'flex', justifyContent: 'space-between' }}>
@@ -418,13 +419,13 @@ const SpawnEntriesTable = ({ fields }) => (
             fields.map((entry, i) => {
                 return (
                     <tr key={i}>
-                        <Field component={TdField} name={`${entry}.npc_id`} />
-                        <Field component={TdField} name={`${entry}.npc_name`} />
-                        <Field component={TdField} name={`${entry}.npc_level`} />
-                        <Field component={TdField} name={`${entry}.npc_maxlevel`} />
+                        <Field component={TdField} name={`${entry}.npc.id`} />
+                        <Field component={TdField} name={`${entry}.npc.name`} />
+                        <Field component={TdField} name={`${entry}.npc.level`} />
+                        <Field component={TdField} name={`${entry}.npc.maxlevel`} />
                         <Field component={TdField} name={`${entry}.chance`} />
-                        <Field component={TdField} name={`${entry}.npc_aggroradius`} />
-                        <Field component={TdField} name={`${entry}.npc_assistradius`} />
+                        <Field component={TdField} name={`${entry}.npc.aggroradius`} />
+                        <Field component={TdField} name={`${entry}.npc.assistradius`} />
                     </tr>
                 );
             })

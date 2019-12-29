@@ -1,7 +1,7 @@
 import { SmartBuffer } from 'smart-buffer';
-import _ from 'lodash';
-import { PFSFile } from './PFS';
-import * as Fragments from './fragments';
+import _               from 'lodash';
+import { PFSFile }     from '../file/PFS';
+import * as Fragments  from './fragments';
 
 class WLDHeader
 {

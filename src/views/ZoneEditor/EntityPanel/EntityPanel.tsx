@@ -1,27 +1,26 @@
-import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import React                    from 'react';
 import { EQEntity, ISpawnData } from '../entity/Entity';
-import SpawnForm from './SpawnForm';
+import SpawnForm                from './SpawnForm';
 
 interface IProps
 {
-    style: React.CSSProperties;
-    entity: EQEntity;
-    saveForm: (entity_type: string, data: any) => void;
-    resetForm: () => void;
-    closeForm: () => void;
-    handleXChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleYChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleZChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleHeadingChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    spawngroupExpanded: boolean;
+    style:                    React.CSSProperties;
+    entity:                   EQEntity;
+    saveForm:                 (entity_type: string, data: any) => void;
+    resetForm:                () => void;
+    closeForm:                () => void;
+    handleXChange:            (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleYChange:            (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleZChange:            (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleHeadingChange:      (event: React.ChangeEvent<HTMLInputElement>) => void;
+    spawngroupExpanded:       boolean;
     toggleSpawngroupExpanded: () => void;
-    showRoamCylinder: boolean;
-    toggleRoamCylinder: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    showRoamCylinder:         boolean;
+    toggleRoamCylinder:       (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleRoamDistanceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    showRoamBox: boolean;
-    toggleRoamBox: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    handleRoamLimitsChange: (min_x: number, max_x: number, min_y: number, max_y: number) => void;
+    showRoamBox:              boolean;
+    toggleRoamBox:            (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleRoamLimitsChange:   (min_x: number, max_x: number, min_y: number, max_y: number) => void;
 }
 
 class EntityPanel extends React.Component<IProps>

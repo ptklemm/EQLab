@@ -124,7 +124,7 @@ export interface ISpawnData
     cond_value: number;
     enabled: number;
     animation: number;
-    spawngroup: ISpawngroupData;
+    spawngroup: ISpawngroupData | null;
 }
 
 export interface ISpawngroupData
@@ -146,16 +146,22 @@ export interface ISpawngroupData
 
 export interface ISpawnEntryData
 {
+    spawngroupID: number;
+    npcID: number;
     chance: number;
-    npc_id: number;
-    npc_name: string;
-    npc_level: number;
-    npc_maxlevel: number;
-    npc_race: number;
-    npc_gender: number;
-    npc_texture: number;
-    npc_aggroradius: number;
-    npc_assistradius: number;
+    npc: ISpawnEntryNPCData;
+}
+
+export interface ISpawnEntryNPCData
+{
+    name: string;
+    level: number;
+    maxlevel: number;
+    race: number;
+    gender: number;
+    texture: number;
+    aggroradius: number;
+    assistradius: number;
 }
 
 export class Spawn extends EQEntity

@@ -12,7 +12,10 @@ export const SET_SPAWN_LABELS     = 'SET_SPAWN_LABELS';
 export const SET_ZONELIST         = 'SET_ZONELIST';
 export const SET_ZONE_NAME        = 'SET_ZONE_NAME';
 export const SET_ZONE             = 'SET_ZONE';
-// Brush
+// Entity
 export const SELECT_ENTITY        = 'SELECT_ENTITY';
 export const CLEAR_ENTITY         = 'CLEAR_ENTITY';
+export const UPDATE_ENTITY        = 'UPDATE_ENTITY';
+// Spawn
+export const UPDATE_SPAWN         = 'UPDATE_SPAWN';
 

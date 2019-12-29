@@ -84,7 +84,7 @@ export interface IZoneEditorReduxState
 export const ZONE_EDITOR_INITIAL_STATE: IZoneEditorReduxState = {
     options: InitOptionsState(),
     zonelist: [],
-    zone_name: 'steamfont',
+    zone_name: 'airplane',
     zone: InitZoneDataState(),
     selected_entity: null
 }
@@ -93,6 +93,7 @@ export const ZoneEditorReducer: Reducer<IZoneEditorReduxState> = (state: IZoneEd
 {
     switch (action.type)
     {
+        // Options
         case ACTION.SET_OPTIONS:          return { ...state, options: action.options };
         case ACTION.SET_SAFE_POINT:       return { ...state, options: { ...state.options, show_safe_point: action.show_safe_point }};
         case ACTION.SET_UNDERWORLD_PLANE: return { ...state, options: { ...state.options, show_underworld_plane: action.show_underworld_plane }};
@@ -100,12 +101,27 @@ export const ZoneEditorReducer: Reducer<IZoneEditorReduxState> = (state: IZoneEd
         case ACTION.SET_DOOR_LABELS:      return { ...state, options: { ...state.options, show_door_labels: action.show_door_labels }};
         case ACTION.SET_SPAWNS:           return { ...state, options: { ...state.options, show_spawns: action.show_spawns }};
         case ACTION.SET_SPAWN_LABELS:     return { ...state, options: { ...state.options, show_spawn_labels: action.show_spawn_labels }};
+        // Zone Data
         case ACTION.SET_ZONELIST:         return { ...state, zonelist: action.zonelist };
         case ACTION.SET_ZONE_NAME:        return { ...state, zone_name: action.zone_name };
         case ACTION.SET_ZONE:             return { ...state, zone: action.zone };
+        // Entity
         case ACTION.SELECT_ENTITY:        return { ...state, selected_entity: action.selected_entity };
         case ACTION.CLEAR_ENTITY:         return { ...state, selected_entity: null };
+        case ACTION.UPDATE_ENTITY:        return { ...state, selected_entity: { ...state.selected_entity, data: action.data }}
+        // Spawn
+        case ACTION.UPDATE_SPAWN:
+            return { ...state, zone: { ...state.zone, 
+                spawns: state.zone.spawns.map(spawn => spawn.id === action.spawn.id ? { ...spawn, data: action.spawn } : spawn)
+            }}
         case ACTION.RESET:                return ZONE_EDITOR_INITIAL_STATE;
         default:                          return state;
     }
 }
+
+// return {
+//     ...state,
+//     spawnTree: state.spawnTree.map(spawn2 => {
+//         if (spawn2.id === action.spawn2.id) { return action.spawn2; } else { return spawn2; }
+//     })
+// }

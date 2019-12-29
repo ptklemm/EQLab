@@ -2,11 +2,11 @@ import * as BABYLON   from 'babylonjs';
 import _              from 'lodash';
 import Jimp           from 'jimp/es';
 import toArrayBuffer  from 'to-arraybuffer';
-import FileLoader     from '../loaders/FileLoader';
-import { PFSFile }    from '../loaders/PFS';
-import WLDFile        from '../loaders/WLD';
-import * as FRAGMENTS from '../loaders/fragments';
-import { Bone }       from '../loaders/fragments/F10';
+import FileLoader     from '../file/FileLoader';
+import { PFSFile }    from '../file/PFS';
+import WLDFile        from './WLD';
+import * as FRAGMENTS from './fragments';
+import { Bone }       from './fragments/F10';
 
 export default class GraphicsFactory
 {
@@ -718,7 +718,7 @@ export default class GraphicsFactory
     public CreateZoneAxes(scene: BABYLON.Scene, size: number): BABYLON.TransformNode
     {
         const makeTextPlane = (text: string, color: string, size: number) => {
-            const dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+            const dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 120, scene, true);
             dynamicTexture.hasAlpha = true;
             dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color , "transparent", true);
 
@@ -744,7 +744,7 @@ export default class GraphicsFactory
         axisX.color = new BABYLON.Color3(1, 0, 0);
         axisX.setParent(parent);
 
-        const xChar = makeTextPlane("X", "red", size / 10);
+        const xChar = makeTextPlane("X/EQY", "red", size / 10);
         xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
         xChar.setParent(parent);
 
@@ -756,7 +756,7 @@ export default class GraphicsFactory
         axisY.color = new BABYLON.Color3(0, 1, 0);
         axisY.setParent(parent);
 
-        const yChar = makeTextPlane("Y", "green", size / 10);
+        const yChar = makeTextPlane("Y/EQZ", "green", size / 10);
         yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
         yChar.setParent(parent);
 
@@ -768,7 +768,7 @@ export default class GraphicsFactory
         axisZ.color = new BABYLON.Color3(0, 0, 1);
         axisZ.setParent(parent);
 
-        const zChar = makeTextPlane("Z", "blue", size / 10);
+        const zChar = makeTextPlane("Z/EQX", "blue", size / 10);
         zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
         zChar.setParent(parent);
 

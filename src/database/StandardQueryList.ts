@@ -24,7 +24,7 @@ export default class StandardQueryList
 
     async Update(data: any, id?: string | number): Promise<any>
     {
-        const res = await this._db.queryAll(`UPDATE ${this.table} SET ? WHERE id = ?`, [data, id || data.id]);
+        await this._db.queryAll(`UPDATE ${this.table} SET ? WHERE id = ?`, [data, id || data.id]);
         return await this.Select(data.id);
     }
 

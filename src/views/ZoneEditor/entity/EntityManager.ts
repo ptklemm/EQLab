@@ -3,8 +3,8 @@ import * as GUI           from 'babylonjs-gui';
 import { find }           from 'lodash';
 import store              from '../../../redux/store';
 import {
-    reset,
-    change
+    reset as resetReduxForm,
+    change as changeReduxForm
 }                         from 'redux-form';
 import {
     IZoneEditorReduxState,
@@ -12,7 +12,7 @@ import {
 }                         from '../../../redux/reducer';
 import * as ACTION        from '../../../redux/actions';
 import DatabaseConnection from '../../../database/Database';
-import GraphicsFactory    from '../factory/GraphicsFactory';
+import GraphicsFactory    from '../graphics/GraphicsFactory';
 import {
     EQPosition,
     EQHeading,
@@ -66,7 +66,7 @@ export default class EntityManager
         this._label_style            = this.labels.createStyle();
         this._label_style.fontFamily = "Arial";
         this._label_style.fontSize   = 12;
-        this._label_style.fontStyle  = "italic"
+        // this._label_style.fontStyle  = "italic"
 
         this._position_gizmo = new BABYLON.PositionGizmo(BABYLON.UtilityLayerRenderer.DefaultUtilityLayer);
         this._position_gizmo.updateGizmoRotationToMatchAttachedMesh = false;
@@ -161,6 +161,50 @@ export default class EntityManager
         this._state = store.getState().zone_editor;
     }
 
+    public async UpdateSpawn(data: any): Promise<void>
+    {
+        // Update spawnentries and spawngroups first
+        if (data.spawngroup)
+        {
+            await this._DB.SpawnGroup.Update(data.spawngroup);
+            // Need to map all spawngroups in redux state after update to keep other spawns in sync
+        }
+
+        await this._DB.Spawn2.Update(data.spawn);
+        const new_spawn = await this._DB.Spawn2.Tree(data.spawn.id);
+        
+        store.dispatch({ type: ACTION.UPDATE_SPAWN, spawn: new_spawn });
+
+        if (this._state.selected_entity)
+        {
+            store.dispatch({ type: ACTION.UPDATE_ENTITY, data: new_spawn });
+            this.UpdateSelectedEntity(this._state.selected_entity);
+        }
+    }
+
+    private UpdateSelectedEntity(entity: EQEntity): void
+    {
+        const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+
+        if (!mesh)
+            return;
+
+        
+        this.CreateGuideLines(mesh);
+        this._position_gizmo.attachedMesh = mesh;
+        this._rotation_gizmo.attachedMesh = mesh;
+
+        // Side-effects
+        switch (entity.type)
+        {
+            case EQEntity.TYPE_SPAWN:
+                this.SelectSpawn(entity as Spawn, mesh);
+                break;
+            default:
+                break;
+        }
+    }
+
     public SelectEntity(mesh: BABYLON.AbstractMesh): void
     {
         const entity = this.GetEntityByTypeAndID(mesh.metadata.EQType, mesh.metadata.EQID);
@@ -191,8 +235,11 @@ export default class EntityManager
         // Side-effects
         switch (entity.type)
         {
-            case EQEntity.TYPE_SPAWN: this.SelectSpawn(entity as Spawn, mesh);
-            default: break;
+            case EQEntity.TYPE_SPAWN:
+                this.SelectSpawn(entity as Spawn, mesh);
+                break;
+            default:
+                break;
         }
     }
 
@@ -214,7 +261,7 @@ export default class EntityManager
     public ResetEntity(entity: EQEntity): void
     {
         // Reset Entity Form
-        store.dispatch(reset(entity.type));
+        store.dispatch(resetReduxForm(entity.type));
 
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
         if (!mesh)
@@ -226,7 +273,8 @@ export default class EntityManager
         switch (entity.type)
         {
             case EQEntity.TYPE_DOOR:
-                rotation = EQHeading.HeadingAndInclineToQuaternion(entity.data.heading, entity.data.incline);
+                const door = entity as Door;
+                rotation = EQHeading.HeadingAndInclineToQuaternion(door.data.heading, door.data.incline);
                 break;
             case EQEntity.TYPE_SPAWN:
                 const spawn = entity as Spawn;
@@ -260,43 +308,49 @@ export default class EntityManager
         this._rotation_gizmo.attachedMesh = null;
     }
 
-    public ChangeEntityXPosition(entity: EQEntity, x: string): void
+    public ChangeEntityXPosition(entity: EQEntity, x: string | number): void
     {
-        if (!x)
-            x = '0';
+        let num_x = Number(x);
+
+        if (isNaN(num_x) || !num_x)
+            num_x = 0;
 
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
         
         if (!mesh)
             return;
 
-        mesh.position.z  = Number(parseFloat(x).toFixed(6));
+        mesh.position.z = num_x;
     }
 
-    public ChangeEntityYPosition(entity: EQEntity, y: string): void
+    public ChangeEntityYPosition(entity: EQEntity, y: string | number): void
     {
-        if (!y)
-            y = '0';
+        let num_y = Number(y);
+
+        if (isNaN(num_y) || !num_y)
+            num_y = 0;
 
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
         
         if (!mesh)
             return;
 
-        mesh.position.x  = Number(parseFloat(y).toFixed(6));
+        mesh.position.x = num_y;
     }
 
-    public ChangeEntityZPosition(entity: EQEntity, z: string): void
+    public ChangeEntityZPosition(entity: EQEntity, z: string | number): void
     {
-        if (!z)
-            z = '0';
+        let num_z = Number(z);
+
+        if (isNaN(num_z) || !num_z)
+            num_z = 0;
 
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
         
         if (!mesh)
             return;
 
-        mesh.position.y = Number(parseFloat(z).toFixed(6));
+        mesh.position.y = num_z;
     }
 
     public ChangeEntityHeading(entity: EQEntity, heading: string): void
@@ -390,9 +444,9 @@ export default class EntityManager
 
         const position = EQPosition.FromVector3(mesh.position).format(entity.type);
 
-        store.dispatch(change(entity.type, EQEntity.GetXField(entity.type), position.x));
-        store.dispatch(change(entity.type, EQEntity.GetYField(entity.type), position.y));
-        store.dispatch(change(entity.type, EQEntity.GetZField(entity.type), position.z));
+        store.dispatch(changeReduxForm(entity.type, EQEntity.GetXField(entity.type), position.x));
+        store.dispatch(changeReduxForm(entity.type, EQEntity.GetYField(entity.type), position.y));
+        store.dispatch(changeReduxForm(entity.type, EQEntity.GetZField(entity.type), position.z));
     }
 
     private HandleEntityRotationDrag(): void
@@ -408,11 +462,14 @@ export default class EntityManager
 
         const rotation = EQHeading.FromQuaternion(mesh.rotationQuaternion).format(entity.type);
 
-        store.dispatch(change(entity.type, 'heading', rotation.heading));
+        store.dispatch(changeReduxForm(entity.type, 'heading', rotation.heading));
     }
     
     private CreateGuideLines(mesh: BABYLON.AbstractMesh): void
     {
+        this._guidelines && this._guidelines.dispose();
+        this._guidelines = null;
+        
         const lines = [[
             new BABYLON.Vector3(-10000, mesh.position.y, mesh.position.z),
             new BABYLON.Vector3( 10000, mesh.position.y, mesh.position.z)
@@ -559,7 +616,7 @@ export default class EntityManager
 
         return [new Spawn(spawn.id, label.uniqueId, model.uniqueId, spawn), model];
     }
-
+    
     private CreateSafePoint(position: EQPosition): void
     {
         const pos = position.toVector3();
