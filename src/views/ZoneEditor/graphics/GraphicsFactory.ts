@@ -18,12 +18,12 @@ export default class GraphicsFactory
     public default_material:    BABYLON.StandardMaterial;
     public default_mesh_length: number;
 
-    // public default_blocked_spell_mesh: BABYLON.Mesh; //box
     public default_door_mesh:   BABYLON.Mesh; //box
     // public default_grid_mesh: BABYLON.Mesh; //sphere
-    // public default_ground_spawn_mesh: BABYLON.Mesh; //box and/or line?
+    public default_ground_spawn_mesh: BABYLON.Mesh;
+    public default_ground_spawn_material: BABYLON.StandardMaterial;
     public default_spawn_mesh:  BABYLON.Mesh; //pyramid
-    // public default_trap_mesh: BABYLON.Mesh; //cylinder
+    public default_trap_material: BABYLON.StandardMaterial;
     
     private _scene:             BABYLON.Scene;
     private _file_loader:       FileLoader;
@@ -48,6 +48,22 @@ export default class GraphicsFactory
         this.default_door_mesh.setEnabled(false);
         this.default_door_mesh.freezeWorldMatrix();
 
+        this.default_ground_spawn_material = new BABYLON.StandardMaterial("DefaultGroundSpawnMaterial", scene);
+        this.default_ground_spawn_material.diffuseColor = BABYLON.Color3.Blue();
+        this.default_ground_spawn_material.specularColor = BABYLON.Color3.Black();
+        this.default_ground_spawn_material.alpha = 1.0;
+
+        this.default_ground_spawn_mesh = BABYLON.MeshBuilder.CreateCylinder("DefaultGroundSpawnMesh", {
+            diameterTop: 0,
+            height: this.default_mesh_length,
+            diameterBottom: this.default_mesh_length * 1.1,
+            tessellation: 4
+        }, this._scene);
+        this.default_ground_spawn_mesh.bakeTransformIntoVertices(BABYLON.Matrix.RotationX(BABYLON.Tools.ToRadians(90)));
+        this.default_ground_spawn_mesh.material = this.default_ground_spawn_material;
+        this.default_ground_spawn_mesh.setEnabled(false);
+        this.default_ground_spawn_mesh.freezeWorldMatrix();
+
         this.default_spawn_mesh = BABYLON.MeshBuilder.CreateCylinder("DefaultSpawnMesh", {
             diameterTop: 0,
             height: this.default_mesh_length,
@@ -58,6 +74,11 @@ export default class GraphicsFactory
         this.default_spawn_mesh.material = this.default_material;
         this.default_spawn_mesh.setEnabled(false);
         this.default_spawn_mesh.freezeWorldMatrix();
+
+        this.default_trap_material = new BABYLON.StandardMaterial("DefaultTrapMaterial", scene);
+        this.default_trap_material.diffuseColor = BABYLON.Color3.Red();
+        this.default_trap_material.specularColor = BABYLON.Color3.Black();
+        this.default_trap_material.alpha = 0.3;
     }
 
     public async LoadGlobalGraphics()
@@ -188,6 +209,8 @@ export default class GraphicsFactory
         }
     }
 
+    // public CreateTrapMesh()
+
     private async CreateMultiMaterial(f31: FRAGMENTS.F31): Promise<BABYLON.MultiMaterial>
     {
         const existing_material = this.GetMultiMaterialByName(f31.name);
@@ -232,8 +255,14 @@ export default class GraphicsFactory
         {
             const f05 = f30.ref as FRAGMENTS.F05;
             const f04 = f05.ref as FRAGMENTS.F04;
-
-            if (!f04.is_animated)
+   
+            if (!f04)
+            {
+                // f30 points directly to f03 fragment
+                const f03 = f30.ref as FRAGMENTS.F03;
+                texture = await this.CreateStaticTexture(f03, masked);
+            }
+            else if (!f04.is_animated)
             {
                 texture = await this.CreateStaticTexture(f04.refs[0] as FRAGMENTS.F03, masked);
             }

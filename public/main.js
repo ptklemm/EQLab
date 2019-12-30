@@ -120,6 +120,12 @@ class MainProcess
             }, {
                 type: 'separator'
             }, {
+                id: 'reload',
+                label: 'Reload from Database',
+                type: 'normal',
+                enabled: true,
+                click: () => { this.HandleReloadFromDatabase(); }
+            }, {
                 id: 'close',
                 label: 'Close Zone',
                 type: 'normal',
@@ -164,6 +170,26 @@ class MainProcess
                     type: 'checkbox',
                     checked: true,
                     click: (menuItem) => { this.ToggleEntityVisibility('Spawn Labels', menuItem.checked); }
+                }, {
+                    label: 'Show Respawn Time on Labels',
+                    type: 'checkbox',
+                    checked: false,
+                    click: (menuItem) => { this.ToggleRespawnLabels(menuItem.checked); }
+                }]
+            }, {
+                id: 'traps',
+                label: 'Traps',
+                type: 'submenu',
+                submenu: [{
+                    label: 'Traps',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Traps', menuItem.checked); }
+                }, {
+                    label: 'Trap Labels',
+                    type: 'checkbox',
+                    checked: true,
+                    click: (menuItem) => { this.ToggleEntityVisibility('Trap Labels', menuItem.checked); }
                 }]
             }]
         }];
@@ -219,12 +245,15 @@ class MainProcess
 
     // File Menu
     HandleOpenZone() { this.zone_editor_window.webContents.send('open-zone'); }
+    HandleReloadFromDatabase() { this.zone_editor_window.webContents.send('reload-from-database'); }
 
     // View Menu
     ToggleEntityVisibility(entity_type, value)
     {
         this.zone_editor_window.webContents.send('toggle-entity-visibility', entity_type, value);
     }
+
+    ToggleRespawnLabels(value) { this.zone_editor_window.webContents.send('toggle-spawn-respawnlabels', value); }
 }
 
 (() => {

@@ -24,7 +24,7 @@ const store: Store<IReduxState> = createStore(
     devToolsEnhancer({
         name: 'EQLab',
         // Filter out Redux-Form actions
-        predicate: (state, action) => action.type.startsWith('@@redux-form') ? false : true
+        // predicate: (state, action) => action.type.startsWith('@@redux-form') ? false : true
     })
 );
 

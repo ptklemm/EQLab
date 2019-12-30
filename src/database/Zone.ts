@@ -59,7 +59,7 @@ export default class ZoneQueryList extends StandardQueryList
         let query = `
         SELECT doors.id, doors.doorid, doors.zone, doors.version, doors.name, doors.pos_y, doors.pos_x, doors.pos_z,
         doors.heading, doors.opentype, doors.guild, doors.lockpick, doors.keyitem, items.Name AS 'keyitem_name', doors.nokeyring,
-        doors.triggerdoor, doors.triggertype, doors.doorisopen, doors.door_param, doors.dest_zone, doors.dest_instance, doors.dest_x,
+        doors.triggerdoor, doors.triggertype, doors.disable_timer, doors.doorisopen, doors.door_param, doors.dest_zone, doors.dest_instance, doors.dest_x,
         doors.dest_y, doors.dest_z, doors.dest_heading, doors.invert_state, doors.incline, doors.size, doors.buffer, doors.client_version_mask,
         doors.is_ldon_door
         FROM doors
@@ -130,7 +130,7 @@ export default class ZoneQueryList extends StandardQueryList
     async GroundSpawns(zone_short_name: string)
     {
         let query = `
-        SELECT ground_spawns.id, ground_spawns.version, ground_spawns.max_x, ground_spawns.max_y, ground_spawns.max_z,
+        SELECT ground_spawns.id, ground_spawns.zoneid, ground_spawns.version, ground_spawns.max_x, ground_spawns.max_y, ground_spawns.max_z,
         ground_spawns.min_x, ground_spawns.min_y, ground_spawns.heading, ground_spawns.name, ground_spawns.item, items.Name AS 'item_name',
         ground_spawns.max_allowed, ground_spawns.comment, ground_spawns.respawn_timer
         FROM ground_spawns
@@ -161,25 +161,6 @@ export default class ZoneQueryList extends StandardQueryList
 
     async Spawns(zone_short_name: string)
     {
-        // let query = `
-        // SELECT spawn2.id AS 'id', spawn2.zone, spawn2.version, spawn2.x, spawn2.y, spawn2.z, spawn2.enabled, spawn2.heading,
-        // spawn2.respawntime, spawn2.variance, spawn2.pathgrid, spawn2._condition, spawn2.cond_value, spawn2.animation, spawn2.spawngroupID,
-        // spawngroup.id AS 'spawngroup:id', spawngroup.name AS 'spawngroup:name', spawngroup.spawn_limit AS 'spawngroup:spawn_limit',
-        // spawngroup.dist AS 'spawngroup:dist', spawngroup.min_x AS 'spawngroup:min_x', spawngroup.min_y AS 'spawngroup:min_y',
-        // spawngroup.max_x AS 'spawngroup:max_x', spawngroup.max_y AS 'spawngroup:max_y', spawngroup.mindelay AS 'spawngroup:mindelay',
-        // spawngroup.delay AS 'spawngroup:delay', spawngroup.despawn AS 'spawngroup:despawn', spawngroup.despawn_timer AS 'spawngroup:despawn_timer',
-        // spawnentry.chance AS 'spawngroup:spawnentries:chance', spawnentry.npcID AS 'spawngroup:spawnentries:npc_id', 
-        // npc_types.name AS 'spawngroup:spawnentries:npc_name', npc_types.level AS 'spawngroup:spawnentries:npc_level', 
-        // npc_types.maxlevel AS 'spawngroup:spawnentries:npc_maxlevel', npc_types.race AS 'spawngroup:spawnentries:npc_race',
-        // npc_types.gender AS 'spawngroup:spawnentries:npc_gender', npc_types.texture AS 'spawngroup:spawnentries:npc_texture',
-        // npc_types.aggroradius AS 'spawngroup:spawnentries:npc_aggroradius', npc_types.assistradius AS 'spawngroup:spawnentries:npc_assistradius'
-        // FROM spawn2
-        // LEFT JOIN spawngroup ON spawn2.spawngroupID = spawngroup.id
-        // LEFT JOIN spawnentry ON spawn2.spawngroupID = spawnentry.spawngroupID
-        // LEFT JOIN npc_types ON spawnentry.npcID = npc_types.id
-        // WHERE spawn2.zone = '${zone_short_name}'
-        // `;
-
         let query = `
         SELECT spawn2.id AS 'id', spawn2.zone, spawn2.version, spawn2.x, spawn2.y, spawn2.z, spawn2.enabled, spawn2.heading,
         spawn2.respawntime, spawn2.variance, spawn2.pathgrid, spawn2._condition, spawn2.cond_value, spawn2.animation, spawn2.spawngroupID,
@@ -223,7 +204,8 @@ export default class ZoneQueryList extends StandardQueryList
         let query = `
         SELECT traps.id, traps.zone, traps.version, traps.x, traps.y, traps.z, traps.chance,
         traps.maxzdiff, traps.radius, traps.effect, traps.effectvalue, spells_new.name AS 'spell_name', npc_types.name AS 'npc_name',
-        traps.effectvalue2, traps.message, traps.skill, traps.level, traps.respawn_time, traps.respawn_var
+        traps.effectvalue2, traps.message, traps.skill, traps.level, traps.respawn_time, traps.respawn_var, traps.triggered_number,
+        traps.group, traps.despawn_when_triggered, traps.undetectable
         FROM traps
         LEFT JOIN spells_new ON traps.effect = 0 AND traps.effectvalue = spells_new.id
         LEFT JOIN npc_types ON (traps.effect = 2 OR traps.effect = 3) AND traps.effectvalue = npc_types.id

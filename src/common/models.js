@@ -1,0 +1,3416 @@
+export const MODELS = [{
+    race: 1,
+    gender: 0,
+    model: "hum",
+    description: "Human Male"
+}, {
+    race: 1,
+    gender: 1,
+    model: "huf",
+    description: "Human Female"
+}, {
+    race: 2,
+    gender: 0,
+    model: "bam",
+    description: "Barbarian Male"
+}, {
+    race: 2,
+    gender: 1,
+    model: "baf",
+    description: "Barbarian Female"
+}, {
+    race: 3,
+    gender: 0,
+    model: "erm",
+    description: "Erudite Male"
+}, {
+    race: 3,
+    gender: 1,
+    model: "erf",
+    description: "Erudite Female"
+}, {
+    race: 4,
+    gender: 0,
+    model: "elm",
+    description: "Wood Elf Male"
+}, {
+    race: 4,
+    gender: 1,
+    model: "elf",
+    description: "Wood Elf Female"
+}, {
+    race: 5,
+    gender: 0,
+    model: "him",
+    description: "High Elf Male"
+}, {
+    race: 5,
+    gender: 1,
+    model: "hif",
+    description: "High Elf Female"
+}, {
+    race: 6,
+    gender: 0,
+    model: "dam",
+    description: "Dark Elf Male"
+}, {
+    race: 6,
+    gender: 1,
+    model: "daf",
+    description: "Dark Elf Female"
+}, {
+    race: 7,
+    gender: 0,
+    model: "ham",
+    description: "Half Elf Male"
+}, {
+    race: 7,
+    gender: 1,
+    model: "haf",
+    description: "Half Elf Female"
+}, {
+    race: 8,
+    gender: 0,
+    model: "dwm",
+    description: "Dwarf Male"
+}, {
+    race: 8,
+    gender: 1,
+    model: "dwf",
+    description: "Dwarf Female"
+}, {
+    race: 9,
+    gender: 0,
+    model: "trm",
+    description: "Troll Male"
+}, {
+    race: 9,
+    gender: 1,
+    model: "trf",
+    description: "Troll Female"
+}, {
+    race: 10,
+    gender: 0,
+    model: "ogm",
+    description: "Ogre Male"
+}, {
+    race: 10,
+    gender: 1,
+    model: "ogf",
+    description: "Ogre Female"
+}, {
+    race: 11,
+    gender: 0,
+    model: "hom",
+    description: "Halfling Male"
+}, {
+    race: 11,
+    gender: 1,
+    model: "hof",
+    description: "Halfling Female"
+}, {
+    race: 12,
+    gender: 0,
+    model: "gnm",
+    description: "Gnome Male"
+}, {
+    race: 12,
+    gender: 1,
+    model: "gnf",
+    description: "Gnome Female"
+}, {
+    race: 13,
+    gender: null,
+    model: "avi",
+    description: "Aviak"
+}, {
+    race: 14,
+    gender: null,
+    model: "wer",
+    description: "Werewolf"
+}, {
+    race: 15,
+    gender: 0,
+    model: "brm",
+    description: "Brownie Male"
+}, {
+    race: 15,
+    gender: 1,
+    model: "brf",
+    description: "Brownie Female"
+}, {
+    race: 16,
+    gender: null,
+    model: "cen",
+    description: "Centaur"
+}, {
+    race: 17,
+    gender: null,
+    model: "gom",
+    description: "Golem"
+}, {
+    race: 18,
+    gender: null,
+    model: "gia",
+    description: "Giant"
+}, {
+    race: 19,
+    gender: null,
+    model: "trk",
+    description: "Trakanon"
+}, {
+    race: 20,
+    gender: null,
+    model: "vst",
+    description: "Venril Sathir"
+}, {
+    race: 21,
+    gender: null,
+    model: "beh",
+    description: "Evil Eye"
+}, {
+    race: 22,
+    gender: null,
+    model: "bet",
+    description: "Beetle"
+}, {
+    race: 23,
+    gender: 0,
+    model: "cpm",
+    description: "Kerran Male"
+}, {
+    race: 23,
+    gender: 1,
+    model: "cpf",
+    description: "Kerran Female"
+}, {
+    race: 24,
+    gender: null,
+    model: "fis",
+    description: "Fish"
+}, {
+    race: 25,
+    gender: 1,
+    model: "faf",
+    description: "Fairy"
+}, {
+    race: 26,
+    gender: null,
+    model: "fro",
+    description: "Froglok (Chain)"
+}, {
+    race: 27,
+    gender: null,
+    model: "frg",
+    description: "Froglok (Naked)"
+}, {
+    race: 28,
+    gender: null,
+    model: "fun",
+    description: "Fungusman"
+}, {
+    race: 29,
+    gender: null,
+    model: "gam",
+    description: "Gargoyle"
+}, {
+    race: 30,
+    gender: null,
+    model: "beh",
+    description: "Gasbag"
+}, {
+    race: 31,
+    gender: null,
+    model: "cub",
+    description: "Gelatinous Cube"
+}, {
+    race: 32,
+    gender: null,
+    model: "ghm",
+    description: "Ghost"
+}, {
+    race: 33,
+    gender: null,
+    model: "ghu",
+    description: "Ghoul"
+}, {
+    race: 34,
+    gender: null,
+    model: "bat",
+    description: "Bat"
+}, {
+    race: 36,
+    gender: null,
+    model: "rat",
+    description: "Rat"
+}, {
+    race: 37,
+    gender: null,
+    model: "sna",
+    description: "Snake"
+}, {
+    race: 38,
+    gender: null,
+    model: "spi",
+    description: "Spider"
+}, {
+    race: 39,
+    gender: null,
+    model: "gnn",
+    description: "Gnoll"
+}, {
+    race: 40,
+    gender: null,
+    model: "gob",
+    description: "Goblin"
+}, {
+    race: 41,
+    gender: null,
+    model: "gor",
+    description: "Gorilla"
+}, {
+    race: 42,
+    gender: null,
+    model: "wol",
+    description: "Wolf"
+}, {
+    race: 43,
+    gender: null,
+    model: "bea",
+    description: "Bear"
+}, {
+    race: 44,
+    gender: null,
+    model: "fpm",
+    description: "Freeport Merchant"
+}, {
+    race: 45,
+    gender: null,
+    model: "dml",
+    description: "Demi Lich"
+}, {
+    race: 46,
+    gender: null,
+    model: "imp",
+    description: "Imp"
+}, {
+    race: 47,
+    gender: null,
+    model: "gri",
+    description: "Griffin"
+}, {
+    race: 48,
+    gender: null,
+    model: "kob",
+    description: "Kobold"
+}, {
+    race: 49,
+    gender: null,
+    model: "dra",
+    description: "Dragon"
+}, {
+    race: 50,
+    gender: null,
+    model: "lim",
+    description: "Lion"
+}, {
+    race: 51,
+    gender: null,
+    model: "liz",
+    description: "Lizard Man"
+}, {
+    race: 52,
+    gender: null,
+    model: "mim",
+    description: "Mimic"
+}, {
+    race: 53,
+    gender: null,
+    model: "min",
+    description: "Minotaur"
+}, {
+    race: 54,
+    gender: null,
+    model: "orc",
+    description: "Orc"
+}, {
+    race: 55,
+    gender: null,
+    model: "bgm",
+    description: "Beggar"
+}, {
+    race: 56,
+    gender: null,
+    model: "pif",
+    description: "Pixie"
+}, {
+    race: 57,
+    gender: 0,
+    model: "drm",
+    description: "Drachnid Male"
+}, {
+    race: 57,
+    gender: 1,
+    model: "drf",
+    description: "Drachnid Female"
+}, {
+    race: 58,
+    gender: null,
+    model: "sol",
+    description: "Solusek Ro"
+}, {
+    race: 59,
+    gender: null,
+    model: "bgg",
+    description: "Goblin"
+}, {
+    race: 60,
+    gender: null,
+    model: "ske",
+    description: "Skeleton"
+}, {
+    race: 61,
+    gender: null,
+    model: "sha",
+    description: "Shark"
+}, {
+    race: 62,
+    gender: null,
+    model: "tun",
+    description: "Tunare"
+}, {
+    race: 63,
+    gender: null,
+    model: "tig",
+    description: "Tiger"
+}, {
+    race: 64,
+    gender: null,
+    model: "tre",
+    description: "Treant"
+}, {
+    race: 65,
+    gender: null,
+    model: "dvm",
+    description: "Maestro of Rancor"
+}, {
+    race: 66,
+    gender: null,
+    model: "ral",
+    description: "Rallos Zek"
+}, {
+    race: 67,
+    gender: null,
+    model: "hhm",
+    description: "Highhold Guard"
+}, {
+    race: 68,
+    gender: null,
+    model: "tem",
+    description: "Tentacle Terror"
+}, {
+    race: 69,
+    gender: null,
+    model: "wil",
+    description: "Will-O-Wisp"
+}, {
+    race: 70,
+    gender: 0,
+    model: "zom",
+    description: "Zombie Male"
+}, {
+    race: 70,
+    gender: 1,
+    model: "zof",
+    description: "Zombie Female"
+}, {
+    race: 71,
+    gender: 0,
+    model: "qcm",
+    description: "Qeynos Merchant Male"
+}, {
+    race: 71,
+    gender: 1,
+    model: "qcf",
+    description: "Qeynos Merchant Female"
+}, {
+    race: 73,
+    gender: null,
+    model: "launch",
+    description: "Launch"
+}, {
+    race: 74,
+    gender: null,
+    model: "pir",
+    description: "Piranha"
+}, {
+    race: 75,
+    gender: null,
+    model: "ele",
+    description: "Elemental"
+}, {
+    race: 76,
+    gender: null,
+    model: "pum",
+    description: "Puma"
+}, {
+    race: 77,
+    gender: null,
+    model: "ngm",
+    description: "Neriak Guard"
+}, {
+    race: 78,
+    gender: null,
+    model: "egm",
+    description: "Erudin Guard"
+}, {
+    race: 79,
+    gender: null,
+    model: "bix",
+    description: "Bixie"
+}, {
+    race: 80,
+    gender: null,
+    model: "rea",
+    description: "Reanimated Hand"
+}, {
+    race: 81,
+    gender: 0,
+    model: "rim",
+    description: "Rivervale Guard Male"
+}, {
+    race: 81,
+    gender: 1,
+    model: "rif",
+    description: "Rivervale Merchant Female"
+}, {
+    race: 82,
+    gender: null,
+    model: "sca",
+    description: "Scarecrow"
+}, {
+    race: 83,
+    gender: null,
+    model: "sku",
+    description: "Skunk"
+}, {
+    race: 84,
+    gender: null,
+    model: "sne",
+    description: "Snake Elemental"
+}, {
+    race: 85,
+    gender: null,
+    model: "spe",
+    description: "Spectre"
+}, {
+    race: 86,
+    gender: null,
+    model: "sph",
+    description: "Sphinx"
+}, {
+    race: 87,
+    gender: null,
+    model: "arm",
+    description: "Armadillo"
+}, {
+    race: 88,
+    gender: 0,
+    model: "clm",
+    description: "Clockwork Gnome Male"
+}, {
+    race: 88,
+    gender: 1,
+    model: "clf",
+    description: "Clockwork Gnome Female"
+}, {
+    race: 89,
+    gender: null,
+    model: "drk",
+    description: "Drake"
+}, {
+    race: 90,
+    gender: 0,
+    model: "hlm",
+    description: "Halas Guard Male"
+}, {
+    race: 90,
+    gender: 1,
+    model: "hlf",
+    description: "Halas Merchant Female"
+}, {
+    race: 91,
+    gender: null,
+    model: "all",
+    description: "Alligator"
+}, {
+    race: 92,
+    gender: 0,
+    model: "grm",
+    description: "Grobb Guard Male"
+}, {
+    race: 92,
+    gender: 1,
+    model: "grf",
+    description: "Grobb Merchant Female"
+}, {
+    race: 93,
+    gender: 0,
+    model: "okm",
+    description: "Oggok Guard Male"
+}, {
+    race: 93,
+    gender: 1,
+    model: "okf",
+    description: "Oggok Merchant Female"
+}, {
+    race: 94,
+    gender: 0,
+    model: "kam",
+    description: "Kaladim Guard Male"
+}, {
+    race: 94,
+    gender: 1,
+    model: "kaf",
+    description: "Kaladim Merchant Female"
+}, {
+    race: 95,
+    gender: null,
+    model: "caz",
+    description: "Cazic Thule"
+}, {
+    race: 96,
+    gender: null,
+    model: "coc",
+    description: "Cockatrice"
+}, {
+    race: 97,
+    gender: null,
+    model: "dia",
+    description: "Daisy Man"
+}, {
+    race: 98,
+    gender: 0,
+    model: "vsm",
+    description: "Vampire Male"
+}, {
+    race: 98,
+    gender: 1,
+    model: "vsf",
+    description: "Vampire Female"
+}, {
+    race: 99,
+    gender: null,
+    model: "den",
+    description: "Amygdalan"
+}, {
+    race: 100,
+    gender: null,
+    model: "der",
+    description: "Dervish"
+}, {
+    race: 101,
+    gender: null,
+    model: "efr",
+    description: "Efreeti"
+}, {
+    race: 102,
+    gender: null,
+    model: "frt",
+    description: "Tadpole"
+}, {
+    race: 103,
+    gender: null,
+    model: "ked",
+    description: "Kedge"
+}, {
+    race: 104,
+    gender: null,
+    model: "lee",
+    description: "Leech"
+}, {
+    race: 105,
+    gender: null,
+    model: "swo",
+    description: "Swordfish"
+}, {
+    race: 106,
+    gender: 0,
+    model: "fem",
+    description: "Felwithe Guard Male"
+}, {
+    race: 106,
+    gender: 1,
+    model: "fef",
+    description: "Felwithe Merchant Female"
+}, {
+    race: 107,
+    gender: null,
+    model: "mam",
+    description: "Mammoth"
+}, {
+    race: 108,
+    gender: null,
+    model: "eye",
+    description: "Eye"
+}, {
+    race: 109,
+    gender: null,
+    model: "was",
+    description: "Wasp"
+}, {
+    race: 110,
+    gender: null,
+    model: "mer",
+    description: "Mermaid"
+}, {
+    race: 111,
+    gender: null,
+    model: "har",
+    description: "Harpy"
+}, {
+    race: 112,
+    gender: 0,
+    model: "gfm",
+    description: "Kelethin Guard Male"
+}, {
+    race: 112,
+    gender: 1,
+    model: "gff",
+    description: "Kelethin Merchant Female"
+}, {
+    race: 113,
+    gender: null,
+    model: "dri",
+    description: "Drixie"
+}, {
+    race: 114,
+    gender: null,
+    model: "gsp",
+    description: "Ghost Ship"
+}, {
+    race: 115,
+    gender: null,
+    model: "cla",
+    description: "Clam"
+}, {
+    race: 116,
+    gender: null,
+    model: "sea",
+    description: "Seahorse"
+}, {
+    race: 117,
+    gender: null,
+    model: "gdm",
+    description: "Ghost Dwarf"
+}, {
+    race: 118,
+    gender: 0,
+    model: "gem",
+    description: "Ghost Erudite Male"
+}, {
+    race: 118,
+    gender: 1,
+    model: "gef",
+    description: "Ghost Erudite Female"
+}, {
+    race: 119,
+    gender: null,
+    model: "stc",
+    description: "Sabertooth"
+}, {
+    race: 120,
+    gender: null,
+    model: "woe",
+    description: "Wolf"
+}, {
+    race: 121,
+    gender: null,
+    model: "grg",
+    description: "Gorgon"
+}, {
+    race: 122,
+    gender: null,
+    model: "dru",
+    description: "Dragon"
+}, {
+    race: 123,
+    gender: null,
+    model: "inn",
+    description: "Innoruuk"
+}, {
+    race: 124,
+    gender: null,
+    model: "uni",
+    description: "Unicorn"
+}, {
+    race: 125,
+    gender: null,
+    model: "peg",
+    description: "Pegasus"
+}, {
+    race: 126,
+    gender: null,
+    model: "dji",
+    description: "Djinn"
+}, {
+    race: 127,
+    gender: null,
+    model: "ivm",
+    description: "Invisible Man"
+}, {
+    race: 129,
+    gender: null,
+    model: "scr",
+    description: "Scorpion"
+}, {
+    race: 131,
+    gender: null,
+    model: "srw",
+    description: "Sarnak"
+}, {
+    race: 132,
+    gender: null,
+    model: "dlk",
+    description: "Draglock"
+}, {
+    race: 133,
+    gender: null,
+    model: "lyc",
+    description: "Drolvarg"
+}, {
+    race: 134,
+    gender: null,
+    model: "mos",
+    description: "Mosquito"
+}, {
+    race: 135,
+    gender: null,
+    model: "rhi",
+    description: "Rhinoceros"
+}, {
+    race: 136,
+    gender: null,
+    model: "xal",
+    description: "Xalgoz"
+}, {
+    race: 137,
+    gender: null,
+    model: "kgo",
+    description: "Goblin"
+}, {
+    race: 138,
+    gender: null,
+    model: "yet",
+    description: "Yeti"
+}, {
+    race: 139,
+    gender: 0,
+    model: "icm",
+    description: "Cabilis Merchant Male"
+}, {
+    race: 139,
+    gender: 1,
+    model: "icf",
+    description: "Cabilis Merchant Female"
+}, {
+    race: 140,
+    gender: null,
+    model: "fgi",
+    description: "Giant"
+}, {
+    race: 144,
+    gender: null,
+    model: "brn",
+    description: "Burynai"
+}, {
+    race: 145,
+    gender: null,
+    model: "goo",
+    description: "Goo"
+}, {
+    race: 146,
+    gender: null,
+    model: "ssn",
+    description: "Sarnak Spirit"
+}, {
+    race: 147,
+    gender: null,
+    model: "sim",
+    description: "Iksar Spirit"
+}, {
+    race: 148,
+    gender: null,
+    model: "bac",
+    description: "Fish"
+}, {
+    race: 149,
+    gender: null,
+    model: "isc",
+    description: "Scorpion"
+}, {
+    race: 150,
+    gender: null,
+    model: "ero",
+    description: "Erollisi"
+}, {
+    race: 151,
+    gender: null,
+    model: "tri",
+    description: "Tribunal"
+}, {
+    race: 152,
+    gender: null,
+    model: "ber",
+    description: "Bertoxxulous"
+}, {
+    race: 153,
+    gender: null,
+    model: "bri",
+    description: "Bristlebane"
+}, {
+    race: 154,
+    gender: null,
+    model: "fdr",
+    description: "Fay Drake"
+}, {
+    race: 155,
+    gender: null,
+    model: "ssk",
+    description: "Undead Sarnak"
+}, {
+    race: 156,
+    gender: 0,
+    model: "vrm",
+    description: "Ratman Male"
+}, {
+    race: 156,
+    gender: 1,
+    model: "vrf",
+    description: "Ratman Female"
+}, {
+    race: 157,
+    gender: null,
+    model: "wyv",
+    description: "Wyvern"
+}, {
+    race: 158,
+    gender: null,
+    model: "wur",
+    description: "Wurm"
+}, {
+    race: 159,
+    gender: null,
+    model: "dev",
+    description: "Devourer"
+}, {
+    race: 160,
+    gender: null,
+    model: "ikg",
+    description: "Iksar Golem"
+}, {
+    race: 161,
+    gender: null,
+    model: "iks",
+    description: "Undead Iksar"
+}, {
+    race: 162,
+    gender: null,
+    model: "mep",
+    description: "Man-Eating Plant"
+}, {
+    race: 163,
+    gender: null,
+    model: "rap",
+    description: "Raptor"
+}, {
+    race: 164,
+    gender: null,
+    model: "sgo",
+    description: "Sarnak Golem"
+}, {
+    race: 165,
+    gender: null,
+    model: "sed",
+    description: "Dragon"
+}, {
+    race: 166,
+    gender: null,
+    model: "ikh",
+    description: "Animated Hand"
+}, {
+    race: 167,
+    gender: null,
+    model: "suc",
+    description: "Succulent"
+}, {
+    race: 168,
+    gender: null,
+    model: "fmo",
+    description: "Holgresh"
+}, {
+    race: 169,
+    gender: null,
+    model: "btm",
+    description: "Brontotherium"
+}, {
+    race: 170,
+    gender: null,
+    model: "sde",
+    description: "Snow Dervish"
+}, {
+    race: 171,
+    gender: null,
+    model: "diw",
+    description: "Dire Wolf"
+}, {
+    race: 172,
+    gender: null,
+    model: "mtc",
+    description: "Manticore"
+}, {
+    race: 173,
+    gender: null,
+    model: "tot",
+    description: "Totem"
+}, {
+    race: 174,
+    gender: null,
+    model: "spc",
+    description: "Ice Spectre"
+}, {
+    race: 175,
+    gender: null,
+    model: "ena",
+    description: "Enchanted Armor"
+}, {
+    race: 176,
+    gender: null,
+    model: "sbu",
+    description: "Snow Rabbit"
+}, {
+    race: 177,
+    gender: null,
+    model: "wal",
+    description: "Walrus"
+}, {
+    race: 178,
+    gender: null,
+    model: "rgm",
+    description: "Geonid"
+}, {
+    race: 181,
+    gender: null,
+    model: "yak",
+    description: "Yakkar"
+}, {
+    race: 182,
+    gender: null,
+    model: "fan",
+    description: "Faun"
+}, {
+    race: 183,
+    gender: null,
+    model: "com",
+    description: "Coldain"
+}, {
+    race: 184,
+    gender: null,
+    model: "dr2",
+    description: "Dragon"
+}, {
+    race: 185,
+    gender: null,
+    model: "hag",
+    description: "Hag"
+}, {
+    race: 186,
+    gender: null,
+    model: "hip",
+    description: "Hippogriff"
+}, {
+    race: 187,
+    gender: null,
+    model: "sir",
+    description: "Siren"
+}, {
+    race: 188,
+    gender: null,
+    model: "fsg",
+    description: "Giant"
+}, {
+    race: 189,
+    gender: null,
+    model: "stg",
+    description: "Giant"
+}, {
+    race: 190,
+    gender: null,
+    model: "otm",
+    description: "Othmir"
+}, {
+    race: 191,
+    gender: null,
+    model: "wlm",
+    description: "Ulthork"
+}, {
+    race: 192,
+    gender: null,
+    model: "ccd",
+    description: "Dragon"
+}, {
+    race: 193,
+    gender: null,
+    model: "abh",
+    description: "Abhorrent"
+}, {
+    race: 194,
+    gender: null,
+    model: "stu",
+    description: "Sea Turtle"
+}, {
+    race: 195,
+    gender: null,
+    model: "bwd",
+    description: "Dragon"
+}, {
+    race: 196,
+    gender: null,
+    model: "gdr",
+    description: "Dragon"
+}, {
+    race: 197,
+    gender: null,
+    model: "ron",
+    description: "Ronnie Test"
+}, {
+    race: 198,
+    gender: null,
+    model: "pri",
+    description: "Dragon"
+}, {
+    race: 199,
+    gender: null,
+    model: "skn",
+    description: "Shik'Nar"
+}, {
+    race: 200,
+    gender: null,
+    model: "rhp",
+    description: "Rockhopper"
+}, {
+    race: 201,
+    gender: null,
+    model: "unb",
+    description: "Underbulk"
+}, {
+    race: 202,
+    gender: null,
+    model: "gmm",
+    description: "Grimling"
+}, {
+    race: 203,
+    gender: null,
+    model: "vac",
+    description: "Worm"
+}, {
+    race: 204,
+    gender: null,
+    model: "ecs",
+    description: "Evan Test"
+}, {
+    race: 205,
+    gender: null,
+    model: "kha",
+    description: "Shadel"
+}, {
+    race: 206,
+    gender: null,
+    model: "owb",
+    description: "Owlbear"
+}, {
+    race: 207,
+    gender: null,
+    model: "rnb",
+    description: "Rhino Beetle"
+}, {
+    race: 208,
+    gender: null,
+    model: "vpm",
+    description: "Vampire"
+}, {
+    race: 209,
+    gender: null,
+    model: "eel",
+    description: "Earth Elemental"
+}, {
+    race: 210,
+    gender: null,
+    model: "ael",
+    description: "Air Elemental"
+}, {
+    race: 211,
+    gender: null,
+    model: "wel",
+    description: "Water Elemental"
+}, {
+    race: 212,
+    gender: null,
+    model: "fel",
+    description: "Fire Elemental"
+}, {
+    race: 213,
+    gender: null,
+    model: "wet",
+    description: "Wetfang Minnow"
+}, {
+    race: 214,
+    gender: null,
+    model: "tho",
+    description: "Thought Horror"
+}, {
+    race: 215,
+    gender: null,
+    model: "teg",
+    description: "Tegi"
+}, {
+    race: 216,
+    gender: null,
+    model: "hsm",
+    description: "Horse"
+}, {
+    race: 217,
+    gender: null,
+    model: "shm",
+    description: "Shissar"
+}, {
+    race: 218,
+    gender: null,
+    model: "fug",
+    description: "Fungal Fiend"
+}, {
+    race: 219,
+    gender: null,
+    model: "vol",
+    description: "Vampire"
+}, {
+    race: 220,
+    gender: null,
+    model: "sgr",
+    description: "Stonegrabber"
+}, {
+    race: 221,
+    gender: null,
+    model: "sch",
+    description: "Scarlet Cheetah"
+}, {
+    race: 222,
+    gender: null,
+    model: "zel",
+    description: "Zelniak"
+}, {
+    race: 223,
+    gender: null,
+    model: "lcr",
+    description: "Lightcrawler"
+}, {
+    race: 224,
+    gender: null,
+    model: "sdm",
+    description: "Shade"
+}, {
+    race: 225,
+    gender: null,
+    model: "snn",
+    description: "Sunfbelow"
+}, {
+    race: 226,
+    gender: null,
+    model: "srv",
+    description: "Sun Revenant"
+}, {
+    race: 227,
+    gender: null,
+    model: "shr",
+    description: "Shrieker"
+}, {
+    race: 228,
+    gender: null,
+    model: "gal",
+    description: "Galorian"
+}, {
+    race: 229,
+    gender: null,
+    model: "net",
+    description: "Netherbian"
+}, {
+    race: 230,
+    gender: null,
+    model: "akm",
+    description: "Akheva"
+}, {
+    race: 231,
+    gender: null,
+    model: "spr",
+    description: "Grieg Veneficus"
+}, {
+    race: 232,
+    gender: null,
+    model: "sow",
+    description: "Sonic Wolf"
+}, {
+    race: 233,
+    gender: null,
+    model: "gsm",
+    description: "Ground Shaker"
+}, {
+    race: 234,
+    gender: null,
+    model: "kes",
+    description: "Vah Shir Skeleton"
+}, {
+    race: 235,
+    gender: null,
+    model: "muh",
+    description: "Wretch"
+}, {
+    race: 236,
+    gender: null,
+    model: "ser",
+    description: "Seru"
+}, {
+    race: 237,
+    gender: null,
+    model: "rem",
+    description: "Recuso"
+}, {
+    race: 238,
+    gender: null,
+    model: "vsk",
+    description: "Vah Shir"
+}, {
+    race: 239,
+    gender: null,
+    model: "vsg",
+    description: "Guard"
+}, {
+    race: 240,
+    gender: null,
+    model: "tpm",
+    description: "Teleport Man"
+}, {
+    race: 241,
+    gender: null,
+    model: "luj",
+    description: "Werewolf"
+}, {
+    race: 242,
+    gender: null,
+    model: "nyd",
+    description: "Nymph"
+}, {
+    race: 243,
+    gender: null,
+    model: "nym",
+    description: "Dryad"
+}, {
+    race: 244,
+    gender: null,
+    model: "trn",
+    description: "Treant"
+}, {
+    race: 245,
+    gender: null,
+    model: "wrf",
+    description: "Fly"
+}, {
+    race: 246,
+    gender: null,
+    model: "tmr",
+    description: "Tarew Marr"
+}, {
+    race: 247,
+    gender: null,
+    model: "sro",
+    description: "Solusek Ro"
+}, {
+    race: 248,
+    gender: null,
+    model: "clg",
+    description: "Clockwork Golem"
+}, {
+    race: 249,
+    gender: null,
+    model: "clb",
+    description: "Clockwork Brain"
+}, {
+    race: 250,
+    gender: null,
+    model: "skb",
+    description: "Banshee"
+}, {
+    race: 251,
+    gender: null,
+    model: "goj",
+    description: "Guard of Justice"
+}, {
+    race: 253,
+    gender: null,
+    model: "dsb",
+    description: "Diseased Fiend"
+}, {
+    race: 254,
+    gender: null,
+    model: "srg",
+    description: "Solusek Ro Guard"
+}, {
+    race: 255,
+    gender: null,
+    model: "btx",
+    description: "Bertoxxulous"
+}, {
+    race: 256,
+    gender: null,
+    model: "tbu",
+    description: "The Tribunal"
+}, {
+    race: 257,
+    gender: null,
+    model: "trt",
+    description: "Terris Thule"
+}, {
+    race: 258,
+    gender: null,
+    model: "veg",
+    description: "Vegerog"
+}, {
+    race: 259,
+    gender: null,
+    model: "cro",
+    description: "Crocodile"
+}, {
+    race: 260,
+    gender: null,
+    model: "nbt",
+    description: "Bat"
+}, {
+    race: 261,
+    gender: null,
+    model: "slg",
+    description: "Hraquis"
+}, {
+    race: 262,
+    gender: null,
+    model: "trq",
+    description: "Tranquilion"
+}, {
+    race: 263,
+    gender: null,
+    model: "tin",
+    description: "Tin Soldier"
+}, {
+    race: 264,
+    gender: null,
+    model: "nmw",
+    description: "Nightmare Wraith"
+}, {
+    race: 265,
+    gender: null,
+    model: "mal",
+    description: "Malarian"
+}, {
+    race: 266,
+    gender: null,
+    model: "kop",
+    description: "Knight of Pestilence"
+}, {
+    race: 267,
+    gender: null,
+    model: "lep",
+    description: "Lepertoloth"
+}, {
+    race: 268,
+    gender: null,
+    model: "bub",
+    description: "Bubonian"
+}, {
+    race: 269,
+    gender: null,
+    model: "buu",
+    description: "Bubonian Underling"
+}, {
+    race: 270,
+    gender: null,
+    model: "pus",
+    description: "Pusling"
+}, {
+    race: 271,
+    gender: null,
+    model: "wmp",
+    description: "Water Mephit"
+}, {
+    race: 272,
+    gender: null,
+    model: "str",
+    description: "Stormrider"
+}, {
+    race: 273,
+    gender: null,
+    model: "jub",
+    description: "Junk Beast"
+}, {
+    race: 274,
+    gender: null,
+    model: "brc",
+    description: "Broken Clockwork"
+}, {
+    race: 275,
+    gender: null,
+    model: "glc",
+    description: "Giant Clockwork"
+}, {
+    race: 276,
+    gender: null,
+    model: "cwb",
+    description: "Clockwork Beetle"
+}, {
+    race: 277,
+    gender: null,
+    model: "nmg",
+    description: "Nightmare Goblin"
+}, {
+    race: 278,
+    gender: null,
+    model: "kar",
+    description: "Karana"
+}, {
+    race: 279,
+    gender: null,
+    model: "brv",
+    description: "Blood Raven"
+}, {
+    race: 280,
+    gender: null,
+    model: "ggl",
+    description: "Nightmare Gargoyle"
+}, {
+    race: 281,
+    gender: null,
+    model: "moi",
+    description: "Mouth of Insanity"
+}, {
+    race: 282,
+    gender: null,
+    model: "hss",
+    description: "Skeletal Horse"
+}, {
+    race: 283,
+    gender: null,
+    model: "sar",
+    description: "Saryrn"
+}, {
+    race: 284,
+    gender: null,
+    model: "fen",
+    description: "Fennin Ro"
+}, {
+    race: 285,
+    gender: null,
+    model: "trw",
+    description: "Tormentor"
+}, {
+    race: 286,
+    gender: null,
+    model: "npt",
+    description: "Soul Devourer"
+}, {
+    race: 287,
+    gender: null,
+    model: "nmh",
+    description: "Nightmare"
+}, {
+    race: 288,
+    gender: null,
+    model: "raz",
+    description: "Rallos Zek"
+}, {
+    race: 289,
+    gender: null,
+    model: "vaz",
+    description: "Vallon Zek"
+}, {
+    race: 290,
+    gender: null,
+    model: "taz",
+    description: "Tallon Zek"
+}, {
+    race: 291,
+    gender: null,
+    model: "amp",
+    description: "Air Mephit"
+}, {
+    race: 292,
+    gender: null,
+    model: "emp",
+    description: "Earth Mephit"
+}, {
+    race: 293,
+    gender: null,
+    model: "fmp",
+    description: "Fire Mephit"
+}, {
+    race: 294,
+    gender: null,
+    model: "nmp",
+    description: "Nightmare Mephit"
+}, {
+    race: 295,
+    gender: null,
+    model: "zeb",
+    description: "Zebuxoruk"
+}, {
+    race: 296,
+    gender: null,
+    model: "mar",
+    description: "Mithaniel Marr"
+}, {
+    race: 297,
+    gender: null,
+    model: "udk",
+    description: "Undead Knight"
+}, {
+    race: 298,
+    gender: null,
+    model: "rth",
+    description: "The Rathe"
+}, {
+    race: 299,
+    gender: null,
+    model: "xeg",
+    description: "Xegony"
+}, {
+    race: 300,
+    gender: null,
+    model: "gtd",
+    description: "Fiend"
+}, {
+    race: 301,
+    gender: null,
+    model: "ont",
+    description: "Test Object"
+}, {
+    race: 302,
+    gender: null,
+    model: "crb",
+    description: "Crab"
+}, {
+    race: 303,
+    gender: null,
+    model: "phx",
+    description: "Phoenix"
+}, {
+    race: 304,
+    gender: null,
+    model: "tmt",
+    description: "Dragon"
+}, {
+    race: 305,
+    gender: null,
+    model: "pbr",
+    description: "Bear"
+}, {
+    race: 306,
+    gender: null,
+    model: "sta",
+    description: "Giant"
+}, {
+    race: 307,
+    gender: null,
+    model: "ssa",
+    description: "Giant"
+}, {
+    race: 308,
+    gender: null,
+    model: "skr",
+    description: "Giant"
+}, {
+    race: 309,
+    gender: null,
+    model: "svo",
+    description: "Giant"
+}, {
+    race: 310,
+    gender: null,
+    model: "sma",
+    description: "Giant"
+}, {
+    race: 311,
+    gender: null,
+    model: "stf",
+    description: "Giant"
+}, {
+    race: 312,
+    gender: null,
+    model: "sce",
+    description: "Giant"
+}, {
+    race: 313,
+    gender: null,
+    model: "wrw",
+    description: "War Wraith"
+}, {
+    race: 314,
+    gender: null,
+    model: "wru",
+    description: "Wrulon"
+}, {
+    race: 315,
+    gender: null,
+    model: "krk",
+    description: "Kraken"
+}, {
+    race: 316,
+    gender: null,
+    model: "paf",
+    description: "Poison Frog"
+}, {
+    race: 317,
+    gender: null,
+    model: "qzt",
+    description: "Nilborien"
+}, {
+    race: 318,
+    gender: null,
+    model: "val",
+    description: "Valorian"
+}, {
+    race: 319,
+    gender: null,
+    model: "wrb",
+    description: "War Boar"
+}, {
+    race: 320,
+    gender: null,
+    model: "efe",
+    description: "Efreeti"
+}, {
+    race: 321,
+    gender: null,
+    model: "wbu",
+    description: "War Boar"
+}, {
+    race: 322,
+    gender: null,
+    model: "bkn",
+    description: "Valorian"
+}, {
+    race: 323,
+    gender: null,
+    model: "aam",
+    description: "Animated Armor"
+}, {
+    race: 324,
+    gender: null,
+    model: "udf",
+    description: "Undead Footman"
+}, {
+    race: 325,
+    gender: null,
+    model: "rzm",
+    description: "Rallos Zek Minion"
+}, {
+    race: 326,
+    gender: null,
+    model: "spd",
+    description: "Arachnid"
+}, {
+    race: 327,
+    gender: null,
+    model: "spl",
+    description: "Crystal Spider"
+}, {
+    race: 328,
+    gender: null,
+    model: "zbc",
+    description: "Zebuxoruk's Cage"
+}, {
+    race: 329,
+    gender: null,
+    model: "btp",
+    description: "BoT Portal"
+}, {
+    race: 331,
+    gender: null,
+    model: "tbm",
+    description: "Troll"
+}, {
+    race: 332,
+    gender: null,
+    model: "fbm",
+    description: "Troll"
+}, {
+    race: 333,
+    gender: null,
+    model: "tsm",
+    description: "Troll"
+}, {
+    race: 334,
+    gender: null,
+    model: "spb",
+    description: "Ghost"
+}, {
+    race: 335,
+    gender: null,
+    model: "tpb",
+    description: "Pirate"
+}, {
+    race: 336,
+    gender: null,
+    model: "tvp",
+    description: "Pirate"
+}, {
+    race: 337,
+    gender: null,
+    model: "tpo",
+    description: "Pirate"
+}, {
+    race: 338,
+    gender: null,
+    model: "gpm",
+    description: "Pirate"
+}, {
+    race: 339,
+    gender: null,
+    model: "dpm",
+    description: "Pirate"
+}, {
+    race: 340,
+    gender: null,
+    model: "opm",
+    description: "Pirate"
+}, {
+    race: 341,
+    gender: null,
+    model: "hpm",
+    description: "Pirate"
+}, {
+    race: 342,
+    gender: null,
+    model: "epm",
+    description: "Pirate"
+}, {
+    race: 343,
+    gender: null,
+    model: "rpf",
+    description: "Frog"
+}, {
+    race: 344,
+    gender: null,
+    model: "tzm",
+    description: "Troll Zombie"
+}, {
+    race: 345,
+    gender: null,
+    model: "lug",
+    description: "Luggald"
+}, {
+    race: 346,
+    gender: null,
+    model: "lga",
+    description: "Luggald"
+}, {
+    race: 347,
+    gender: null,
+    model: "lgr",
+    description: "Luggalds"
+}, {
+    race: 348,
+    gender: null,
+    model: "fmt",
+    description: "Drogmore"
+}, {
+    race: 349,
+    gender: null,
+    model: "fsk",
+    description: "Froglok Skeleton"
+}, {
+    race: 350,
+    gender: null,
+    model: "fud",
+    description: "Undead Froglok"
+}, {
+    race: 351,
+    gender: null,
+    model: "iwm",
+    description: "Knight of Hate"
+}, {
+    race: 352,
+    gender: null,
+    model: "izm",
+    description: "Arcanist of Hate"
+}, {
+    race: 353,
+    gender: null,
+    model: "vek",
+    description: "Veksar"
+}, {
+    race: 354,
+    gender: null,
+    model: "gvk",
+    description: "Veksar"
+}, {
+    race: 355,
+    gender: null,
+    model: "bvk",
+    description: "Veksar"
+}, {
+    race: 356,
+    gender: null,
+    model: "wof",
+    description: "Chokidai"
+}, {
+    race: 357,
+    gender: null,
+    model: "wuf",
+    description: "Undead Chokidai"
+}, {
+    race: 358,
+    gender: null,
+    model: "uvk",
+    description: "Undead Veksar"
+}, {
+    race: 359,
+    gender: null,
+    model: "lmm",
+    description: "Vampire"
+}, {
+    race: 360,
+    gender: null,
+    model: "mmm",
+    description: "Vampire"
+}, {
+    race: 361,
+    gender: null,
+    model: "rom",
+    description: "Rujarkian Orc"
+}, {
+    race: 362,
+    gender: null,
+    model: "bgb",
+    description: "Bone Golem"
+}, {
+    race: 363,
+    gender: null,
+    model: "syn",
+    description: "Synarcana"
+}, {
+    race: 364,
+    gender: null,
+    model: "sem",
+    description: "Sand Elf"
+}, {
+    race: 365,
+    gender: null,
+    model: "mmv",
+    description: "Vampire"
+}, {
+    race: 366,
+    gender: null,
+    model: "roe",
+    description: "Rujarkian Orc"
+}, {
+    race: 367,
+    gender: null,
+    model: "skt",
+    description: "Skeleton"
+}, {
+    race: 368,
+    gender: null,
+    model: "mmy",
+    description: "Mummy"
+}, {
+    race: 369,
+    gender: null,
+    model: "gbl",
+    description: "Goblin"
+}, {
+    race: 370,
+    gender: null,
+    model: "nin",
+    description: "Insect"
+}, {
+    race: 371,
+    gender: null,
+    model: "fgh",
+    description: "Froglok Ghost"
+}, {
+    race: 372,
+    gender: null,
+    model: "drv",
+    description: "Dervish"
+}, {
+    race: 373,
+    gender: null,
+    model: "sdc",
+    description: "Shade"
+}, {
+    race: 374,
+    gender: null,
+    model: "glm",
+    description: "Golem"
+}, {
+    race: 375,
+    gender: null,
+    model: "eey",
+    description: "Evil Eye"
+}, {
+    race: 376,
+    gender: null,
+    model: "box",
+    description: "Box"
+}, {
+    race: 377,
+    gender: null,
+    model: "brl",
+    description: "Barrel"
+}, {
+    race: 378,
+    gender: null,
+    model: "cst",
+    description: "Chest"
+}, {
+    race: 379,
+    gender: null,
+    model: "vas",
+    description: "Vase"
+}, {
+    race: 380,
+    gender: null,
+    model: "tbl",
+    description: "Table"
+}, {
+    race: 381,
+    gender: null,
+    model: "rak",
+    description: "Weapon Rack"
+}, {
+    race: 382,
+    gender: null,
+    model: "cpt",
+    description: "Coffin"
+}, {
+    race: 383,
+    gender: null,
+    model: "bon",
+    description: "Bones"
+}, {
+    race: 384,
+    gender: null,
+    model: "jkr",
+    description: "Jokester"
+}, {
+    race: 385,
+    gender: null,
+    model: "tnm",
+    description: "Nihil"
+}, {
+    race: 386,
+    gender: null,
+    model: "tem",
+    description: "Trusik"
+}, {
+    race: 387,
+    gender: null,
+    model: "tgl",
+    description: "Stone Worker"
+}, {
+    race: 388,
+    gender: null,
+    model: "twf",
+    description: "Hynid"
+}, {
+    race: 389,
+    gender: null,
+    model: "tac",
+    description: "Turepta"
+}, {
+    race: 390,
+    gender: null,
+    model: "tmb",
+    description: "Cragbeast"
+}, {
+    race: 391,
+    gender: null,
+    model: "ttb",
+    description: "Stonemite"
+}, {
+    race: 392,
+    gender: null,
+    model: "iwh",
+    description: "Ukun"
+}, {
+    race: 393,
+    gender: null,
+    model: "iec",
+    description: "Ixt"
+}, {
+    race: 394,
+    gender: null,
+    model: "ila",
+    description: "Ikaav"
+}, {
+    race: 395,
+    gender: null,
+    model: "icy",
+    description: "Aneuk"
+}, {
+    race: 396,
+    gender: null,
+    model: "ihu",
+    description: "Kyv"
+}, {
+    race: 397,
+    gender: null,
+    model: "isb",
+    description: "Noc"
+}, {
+    race: 398,
+    gender: null,
+    model: "ibr",
+    description: "Ra`tuk"
+}, {
+    race: 399,
+    gender: null,
+    model: "ifc",
+    description: "Taneth"
+}, {
+    race: 400,
+    gender: null,
+    model: "ilb",
+    description: "Huvul"
+}, {
+    race: 401,
+    gender: null,
+    model: "iwb",
+    description: "Mutna"
+}, {
+    race: 402,
+    gender: null,
+    model: "ise",
+    description: "Mastruq"
+}, {
+    race: 403,
+    gender: null,
+    model: "tln",
+    description: "Taelosian"
+}, {
+    race: 404,
+    gender: null,
+    model: "shp",
+    description: "Discord Ship"
+}, {
+    race: 405,
+    gender: null,
+    model: "tgo",
+    description: "Stone Worker"
+}, {
+    race: 406,
+    gender: null,
+    model: "clv",
+    description: "Mata Muram"
+}, {
+    race: 407,
+    gender: null,
+    model: "mur",
+    description: "Lightning Warrior"
+}, {
+    race: 408,
+    gender: null,
+    model: "scu",
+    description: "Succubus"
+}, {
+    race: 409,
+    gender: null,
+    model: "dsg",
+    description: "Bazu"
+}, {
+    race: 410,
+    gender: null,
+    model: "fra",
+    description: "Feran"
+}, {
+    race: 411,
+    gender: null,
+    model: "scu",
+    description: "Pyrilen"
+}, {
+    race: 412,
+    gender: null,
+    model: "chm",
+    description: "Chimera"
+}, {
+    race: 413,
+    gender: null,
+    model: "ddm",
+    description: "Dragorn"
+}, {
+    race: 414,
+    gender: null,
+    model: "dma",
+    description: "Murkglider"
+}, {
+    race: 415,
+    gender: null,
+    model: "rtn",
+    description: "Rat"
+}, {
+    race: 416,
+    gender: null,
+    model: "btn",
+    description: "Bat"
+}, {
+    race: 417,
+    gender: null,
+    model: "frd",
+    description: "Gelidran"
+}, {
+    race: 418,
+    gender: null,
+    model: "dsf",
+    description: "Discordling"
+}, {
+    race: 419,
+    gender: null,
+    model: "ddv",
+    description: "Girplan"
+}, {
+    race: 420,
+    gender: null,
+    model: "mnt",
+    description: "Minotaur"
+}, {
+    race: 421,
+    gender: null,
+    model: "dbx",
+    description: "Dragorn Box"
+}, {
+    race: 422,
+    gender: null,
+    model: "rob",
+    description: "Runed Orb"
+}, {
+    race: 423,
+    gender: null,
+    model: "dbp",
+    description: "Dragon Bones"
+}, {
+    race: 424,
+    gender: null,
+    model: "map",
+    description: "Muramite Armor Pile"
+}, {
+    race: 425,
+    gender: null,
+    model: "crs",
+    description: "Crystal Shard"
+}, {
+    race: 426,
+    gender: null,
+    model: "prt",
+    description: "Portal"
+}, {
+    race: 427,
+    gender: null,
+    model: "cnp",
+    description: "Coin Purse"
+}, {
+    race: 428,
+    gender: null,
+    model: "rkp",
+    description: "Rock Pile"
+}, {
+    race: 429,
+    gender: null,
+    model: "mes",
+    description: "Murkglider Egg Sack"
+}, {
+    race: 430,
+    gender: null,
+    model: "cdr",
+    description: "Drake"
+}, {
+    race: 431,
+    gender: null,
+    model: "dvs",
+    description: "Dervish"
+}, {
+    race: 432,
+    gender: null,
+    model: "dke",
+    description: "Drake"
+}, {
+    race: 433,
+    gender: null,
+    model: "gbn",
+    description: "Goblin"
+}, {
+    race: 434,
+    gender: null,
+    model: "krn",
+    description: "Kirin"
+}, {
+    race: 435,
+    gender: null,
+    model: "ldr",
+    description: "Dragon"
+}, {
+    race: 436,
+    gender: null,
+    model: "bas",
+    description: "Basilisk"
+}, {
+    race: 437,
+    gender: null,
+    model: "mdr",
+    description: "Dragon"
+}, {
+    race: 438,
+    gender: null,
+    model: "sdr",
+    description: "Dragon"
+}, {
+    race: 439,
+    gender: null,
+    model: "pma",
+    description: "Puma"
+}, {
+    race: 440,
+    gender: null,
+    model: "tar",
+    description: "Spider"
+}, {
+    race: 441,
+    gender: null,
+    model: "spq",
+    description: "Spider Queen"
+}, {
+    race: 442,
+    gender: null,
+    model: "ans",
+    description: "Animated Statue"
+}, {
+    race: 445,
+    gender: null,
+    model: "dre",
+    description: "Dragon Egg"
+}, {
+    race: 446,
+    gender: null,
+    model: "drs",
+    description: "Dragon Statue"
+}, {
+    race: 447,
+    gender: null,
+    model: "lvr",
+    description: "Lava Rock"
+}, {
+    race: 448,
+    gender: null,
+    model: "asm",
+    description: "Animated Statue"
+}, {
+    race: 449,
+    gender: null,
+    model: "seg",
+    description: "Spider Egg Sack"
+}, {
+    race: 450,
+    gender: null,
+    model: "lsp",
+    description: "Lava Spider"
+}, {
+    race: 451,
+    gender: null,
+    model: "lsq",
+    description: "Lava Spider Queen"
+}, {
+    race: 452,
+    gender: null,
+    model: "shd",
+    description: "Dragon"
+}, {
+    race: 453,
+    gender: null,
+    model: "fgt",
+    description: "Giant"
+}, {
+    race: 454,
+    gender: null,
+    model: "wwf",
+    description: "Werewolf"
+}, {
+    race: 455,
+    gender: null,
+    model: "kbd",
+    description: "Kobold"
+}, {
+    race: 456,
+    gender: null,
+    model: "fng",
+    description: "Sporali"
+}, {
+    race: 457,
+    gender: null,
+    model: "cwg",
+    description: "Gnomework"
+}, {
+    race: 458,
+    gender: null,
+    model: "ork",
+    description: "Orc"
+}, {
+    race: 459,
+    gender: null,
+    model: "crh",
+    description: "Corathus"
+}, {
+    race: 460,
+    gender: null,
+    model: "crl",
+    description: "Coral"
+}, {
+    race: 461,
+    gender: null,
+    model: "dcf",
+    description: "Drachnid"
+}, {
+    race: 462,
+    gender: null,
+    model: "drc",
+    description: "Drachnid Cocoon"
+}, {
+    race: 463,
+    gender: null,
+    model: "fgp",
+    description: "Fungus Patch"
+}, {
+    race: 464,
+    gender: null,
+    model: "ggy",
+    description: "Gargoyle"
+}, {
+    race: 465,
+    gender: null,
+    model: "kor",
+    description: "Witheran"
+}, {
+    race: 466,
+    gender: null,
+    model: "myg",
+    description: "Dark Lord"
+}, {
+    race: 467,
+    gender: null,
+    model: "shl",
+    description: "Shiliskin"
+}, {
+    race: 468,
+    gender: null,
+    model: "snk",
+    description: "Snake"
+}, {
+    race: 469,
+    gender: null,
+    model: "eve",
+    description: "Evil Eye"
+}, {
+    race: 470,
+    gender: null,
+    model: "mnr",
+    description: "Minotaur"
+}, {
+    race: 471,
+    gender: null,
+    model: "zmf",
+    description: "Zombie"
+}, {
+    race: 472,
+    gender: null,
+    model: "cwr",
+    description: "Clockwork Boar"
+}, {
+    race: 473,
+    gender: null,
+    model: "fry",
+    description: "Fairy"
+}, {
+    race: 474,
+    gender: null,
+    model: "krb",
+    description: "Witheran"
+}, {
+    race: 475,
+    gender: null,
+    model: "aie",
+    description: "Air Elemental"
+}, {
+    race: 476,
+    gender: null,
+    model: "eae",
+    description: "Earth Elemental"
+}, {
+    race: 477,
+    gender: null,
+    model: "fie",
+    description: "Fire Elemental"
+}, {
+    race: 478,
+    gender: null,
+    model: "wae",
+    description: "Water Elemental"
+}, {
+    race: 479,
+    gender: null,
+    model: "alr",
+    description: "Alligator"
+}, {
+    race: 480,
+    gender: null,
+    model: "bar",
+    description: "Bear"
+}, {
+    race: 481,
+    gender: null,
+    model: "scw",
+    description: "Scaled Wolf"
+}, {
+    race: 482,
+    gender: null,
+    model: "wlf",
+    description: "Wolf"
+}, {
+    race: 483,
+    gender: null,
+    model: "spw",
+    description: "Spirit Wolf"
+}, {
+    race: 484,
+    gender: null,
+    model: "skl",
+    description: "Skeleton"
+}, {
+    race: 485,
+    gender: null,
+    model: "spt",
+    description: "Spectre"
+}, {
+    race: 486,
+    gender: null,
+    model: "blv",
+    description: "Bolvirk"
+}, {
+    race: 487,
+    gender: null,
+    model: "bse",
+    description: "Banshee"
+}, {
+    race: 488,
+    gender: null,
+    model: "bsg",
+    description: "Banshee"
+}, {
+    race: 489,
+    gender: null,
+    model: "eef",
+    description: "Elddar"
+}, {
+    race: 490,
+    gender: null,
+    model: "gfo",
+    description: "Forest Giant"
+}, {
+    race: 491,
+    gender: null,
+    model: "glb",
+    description: "Bone Golem"
+}, {
+    race: 492,
+    gender: null,
+    model: "hrs",
+    description: "Horse"
+}, {
+    race: 493,
+    gender: null,
+    model: "pgs",
+    description: "Pegasus"
+}, {
+    race: 494,
+    gender: null,
+    model: "smd",
+    description: "Shambling Mound"
+}, {
+    race: 495,
+    gender: null,
+    model: "srn",
+    description: "Scrykin"
+}, {
+    race: 496,
+    gender: null,
+    model: "tra",
+    description: "Treant"
+}, {
+    race: 497,
+    gender: null,
+    model: "vaf",
+    description: "Vampire"
+}, {
+    race: 498,
+    gender: null,
+    model: "aro",
+    description: "Ayonae Ro"
+}, {
+    race: 499,
+    gender: null,
+    model: "szk",
+    description: "Sullon Zek"
+}, {
+    race: 500,
+    gender: null,
+    model: "bnr",
+    description: "Banner"
+}, {
+    race: 501,
+    gender: null,
+    model: "flg",
+    description: "Flag"
+}, {
+    race: 502,
+    gender: null,
+    model: "row",
+    description: "Rowboat"
+}, {
+    race: 503,
+    gender: null,
+    model: "t00",
+    description: "Bear Trap"
+}, {
+    race: 504,
+    gender: null,
+    model: "t01",
+    description: "Clockwork Bomb"
+}, {
+    race: 505,
+    gender: null,
+    model: "t02",
+    description: "Dynamite Keg"
+}, {
+    race: 506,
+    gender: null,
+    model: "t03",
+    description: "Pressure Plate"
+}, {
+    race: 507,
+    gender: null,
+    model: "t04",
+    description: "Puffer Spore"
+}, {
+    race: 508,
+    gender: null,
+    model: "t05",
+    description: "Stone Ring"
+}, {
+    race: 509,
+    gender: null,
+    model: "t06",
+    description: "Root Tentacle"
+}, {
+    race: 510,
+    gender: null,
+    model: "t07",
+    description: "Runic Symbol"
+}, {
+    race: 511,
+    gender: null,
+    model: "t08",
+    description: "Saltpetter Bomb"
+}, {
+    race: 512,
+    gender: null,
+    model: "t09",
+    description: "Floating Skull"
+}, {
+    race: 513,
+    gender: null,
+    model: "t10",
+    description: "Spike Trap"
+}, {
+    race: 514,
+    gender: null,
+    model: "t11",
+    description: "Totem"
+}, {
+    race: 515,
+    gender: null,
+    model: "t12",
+    description: "Web"
+}, {
+    race: 516,
+    gender: null,
+    model: "t13",
+    description: "Wicker Basket"
+}, {
+    race: 517,
+    gender: null,
+    model: "unm",
+    description: "Nightmare/Unicorn"
+}, {
+    race: 518,
+    gender: null,
+    model: "hrs",
+    description: "Horse"
+}, {
+    race: 519,
+    gender: null,
+    model: "unm",
+    description: "Nightmare/Unicorn"
+}, {
+    race: 520,
+    gender: null,
+    model: "bxi",
+    description: "Bixie"
+}, {
+    race: 521,
+    gender: null,
+    model: "cnt",
+    description: "Centaur"
+}, {
+    race: 522,
+    gender: null,
+    model: "dkf",
+    description: "Drakkin"
+}, {
+    race: 523,
+    gender: null,
+    model: "gfr",
+    description: "Giant"
+}, {
+    race: 524,
+    gender: null,
+    model: "gnl",
+    description: "Gnoll"
+}, {
+    race: 525,
+    gender: null,
+    model: "grn",
+    description: "Griffin"
+}, {
+    race: 526,
+    gender: null,
+    model: "gfs",
+    description: "Giant Shade"
+}, {
+    race: 527,
+    gender: null,
+    model: "hrp",
+    description: "Harpy"
+}, {
+    race: 528,
+    gender: null,
+    model: "mth",
+    description: "Mammoth"
+}, {
+    race: 529,
+    gender: null,
+    model: "sat",
+    description: "Satyr"
+}, {
+    race: 530,
+    gender: null,
+    model: "drg",
+    description: "Dragon"
+}, {
+    race: 531,
+    gender: null,
+    model: "drn",
+    description: "Dragon"
+}, {
+    race: 532,
+    gender: null,
+    model: "dyn",
+    description: "Dyn'Leth"
+}, {
+    race: 533,
+    gender: null,
+    model: "shi",
+    description: "Boat"
+}, {
+    race: 534,
+    gender: null,
+    model: "i00",
+    description: "Weapon Rack"
+}, {
+    race: 535,
+    gender: null,
+    model: "i01",
+    description: "Armor Rack"
+}, {
+    race: 536,
+    gender: null,
+    model: "i02",
+    description: "Honey Pot"
+}, {
+    race: 537,
+    gender: null,
+    model: "i03",
+    description: "Jum Jum Bucket"
+}, {
+    race: 538,
+    gender: null,
+    model: "i04",
+    description: "Toolbox"
+}, {
+    race: 539,
+    gender: null,
+    model: "i05",
+    description: "Stone Jug"
+}, {
+    race: 540,
+    gender: null,
+    model: "i06",
+    description: "Small Plant"
+}, {
+    race: 541,
+    gender: null,
+    model: "i07",
+    description: "Medium Plant"
+}, {
+    race: 542,
+    gender: null,
+    model: "i08",
+    description: "Tall Plant"
+}, {
+    race: 543,
+    gender: null,
+    model: "i09",
+    description: "Wine Cask"
+}, {
+    race: 544,
+    gender: null,
+    model: "b01",
+    description: "Elven Boat"
+}, {
+    race: 545,
+    gender: null,
+    model: "b02",
+    description: "Gnomish Boat"
+}, {
+    race: 546,
+    gender: null,
+    model: "b03",
+    description: "Barrel Barge Ship"
+}, {
+    race: 547,
+    gender: null,
+    model: "gul",
+    description: "Goo"
+}, {
+    race: 548,
+    gender: null,
+    model: "gum",
+    description: "Goo"
+}, {
+    race: 549,
+    gender: null,
+    model: "gus",
+    description: "Goo"
+}, {
+    race: 550,
+    gender: null,
+    model: "b04",
+    description: "Merchant Ship"
+}, {
+    race: 551,
+    gender: null,
+    model: "b05",
+    description: "Pirate Ship"
+}, {
+    race: 552,
+    gender: null,
+    model: "b06",
+    description: "Ghost Ship"
+}, {
+    race: 553,
+    gender: null,
+    model: "g00",
+    description: "Banner"
+}, {
+    race: 554,
+    gender: null,
+    model: "g01",
+    description: "Banner"
+}, {
+    race: 555,
+    gender: null,
+    model: "g02",
+    description: "Banner"
+}, {
+    race: 556,
+    gender: null,
+    model: "g03",
+    description: "Banner"
+}, {
+    race: 557,
+    gender: null,
+    model: "g04",
+    description: "Banner"
+}, {
+    race: 558,
+    gender: null,
+    model: "avk",
+    description: "Aviak"
+}, {
+    race: 559,
+    gender: null,
+    model: "btl",
+    description: "Beetle"
+}, {
+    race: 560,
+    gender: null,
+    model: "grl",
+    description: "Gorilla"
+}, {
+    race: 561,
+    gender: null,
+    model: "kdg",
+    description: "Kedge"
+}, {
+    race: 562,
+    gender: null,
+    model: "krm",
+    description: "Kerran"
+}, {
+    race: 563,
+    gender: null,
+    model: "shs",
+    description: "Shissar"
+}, {
+    race: 564,
+    gender: null,
+    model: "sin",
+    description: "Siren"
+}, {
+    race: 565,
+    gender: null,
+    model: "spx",
+    description: "Sphinx"
+}, {
+    race: 566,
+    gender: null,
+    model: "hnm",
+    description: "Human"
+}, {
+    race: 567,
+    gender: null,
+    model: "i10",
+    description: "Campfire"
+}, {
+    race: 568,
+    gender: null,
+    model: "bnm",
+    description: "Brownie"
+}, {
+    race: 569,
+    gender: null,
+    model: "drp",
+    description: "Dragon"
+}, {
+    race: 570,
+    gender: null,
+    model: "exo",
+    description: "Exoskeleton"
+}, {
+    race: 571,
+    gender: null,
+    model: "gho",
+    description: "Ghoul"
+}, {
+    race: 572,
+    gender: null,
+    model: "gua",
+    description: "Clockwork Guardian"
+}, {
+    race: 573,
+    gender: null,
+    model: "mtp",
+    description: "Mantrap"
+}, {
+    race: 574,
+    gender: null,
+    model: "mtr",
+    description: "Minotaur"
+}, {
+    race: 575,
+    gender: null,
+    model: "scc",
+    description: "Scarecrow"
+}, {
+    race: 576,
+    gender: null,
+    model: "she",
+    description: "Shade"
+}, {
+    race: 577,
+    gender: null,
+    model: "swc",
+    description: "Rotocopter"
+}, {
+    race: 578,
+    gender: null,
+    model: "tnt",
+    description: "Tentacle Terror"
+}, {
+    race: 579,
+    gender: null,
+    model: "wok",
+    description: "Wereorc"
+}, {
+    race: 580,
+    gender: null,
+    model: "wor",
+    description: "Worg"
+}, {
+    race: 581,
+    gender: null,
+    model: "wyr",
+    description: "Wyvern"
+}, {
+    race: 582,
+    gender: null,
+    model: "mch",
+    description: "Chimera"
+}, {
+    race: 583,
+    gender: null,
+    model: "mki",
+    description: "Kirin"
+}, {
+    race: 584,
+    gender: null,
+    model: "mpu",
+    description: "Puma"
+}, {
+    race: 585,
+    gender: null,
+    model: "i11",
+    description: "Boulder"
+}, {
+    race: 586,
+    gender: null,
+    model: "g05",
+    description: "Banner"
+}, {
+    race: 587,
+    gender: null,
+    model: "xem",
+    description: "Elven Ghost"
+}, {
+    race: 588,
+    gender: null,
+    model: "xhm",
+    description: "Human Ghost"
+}, {
+    race: 589,
+    gender: null,
+    model: "i12",
+    description: "Chest"
+}, {
+    race: 590,
+    gender: null,
+    model: "i13",
+    description: "Chest"
+}, {
+    race: 591,
+    gender: null,
+    model: "i14",
+    description: "Crystal"
+}, {
+    race: 592,
+    gender: null,
+    model: "i15",
+    description: "Coffin"
+}, {
+    race: 593,
+    gender: null,
+    model: "i16",
+    description: "Guardian CPU"
+}, {
+    race: 594,
+    gender: null,
+    model: "mwo",
+    description: "Worg"
+}, {
+    race: 595,
+    gender: null,
+    model: "obj_blimp",
+    description: "Mansion"
+}, {
+    race: 596,
+    gender: null,
+    model: "obp_meldrath",
+    description: "Floating Island"
+}, {
+    race: 597,
+    gender: null,
+    model: "mcs",
+    description: "Cragslither"
+}, {
+    race: 598,
+    gender: null,
+    model: "mwr",
+    description: "Wrulon"
+}, {
+    race: 599,
+    gender: null,
+    model: "s01",
+    description: ""
+}, {
+    race: 600,
+    gender: null,
+    model: "ivm",
+    description: "Invisible Man of Zomm"
+}, {
+    race: 601,
+    gender: null,
+    model: "swc",
+    description: "Robocopter of Zomm"
+}, {
+    race: 602,
+    gender: null,
+    model: "bur",
+    description: "Burynai"
+}, {
+    race: 603,
+    gender: null,
+    model: "fgg",
+    description: "Frog"
+}, {
+    race: 604,
+    gender: null,
+    model: "drl",
+    description: "Dracolich"
+}, {
+    race: 605,
+    gender: null,
+    model: "xim",
+    description: "Iksar Ghost"
+}, {
+    race: 606,
+    gender: null,
+    model: "ski",
+    description: "Iksar Skeleton"
+}, {
+    race: 607,
+    gender: null,
+    model: "mph",
+    description: "Mephit"
+}, {
+    race: 608,
+    gender: null,
+    model: "mud",
+    description: "Muddite"
+}, {
+    race: 609,
+    gender: null,
+    model: "rpt",
+    description: "Raptor"
+}, {
+    race: 610,
+    gender: null,
+    model: "srk",
+    description: "Sarnak"
+}, {
+    race: 611,
+    gender: null,
+    model: "sco",
+    description: "Scorpion"
+}, {
+    race: 612,
+    gender: null,
+    model: "tse",
+    description: "Tsetsian"
+}, {
+    race: 613,
+    gender: null,
+    model: "wrm",
+    description: "Wurm"
+}, {
+    race: 614,
+    gender: null,
+    model: "bal",
+    description: "Nekhon"
+}, {
+    race: 615,
+    gender: null,
+    model: "hyc",
+    description: "Hydra Crystal"
+}, {
+    race: 616,
+    gender: null,
+    model: "cry",
+    description: "Crystal Sphere"
+}, {
+    race: 617,
+    gender: null,
+    model: "gnd",
+    description: "Gnoll"
+}, {
+    race: 618,
+    gender: null,
+    model: "sok",
+    description: "Sokokar"
+}, {
+    race: 619,
+    gender: null,
+    model: "pys",
+    description: "Stone Pylon"
+}, {
+    race: 620,
+    gender: null,
+    model: "dvl",
+    description: "Demon Vulture"
+}, {
+    race: 621,
+    gender: null,
+    model: "i17",
+    description: "Wagon"
+}, {
+    race: 622,
+    gender: null,
+    model: "god",
+    description: "God of Discord"
+}, {
+    race: 623,
+    gender: null,
+    model: "mfr",
+    description: "Feran Mount"
+}, {
+    race: 624,
+    gender: null,
+    model: "onf",
+    description: "Ogre NPC - Male"
+}, {
+    race: 625,
+    gender: null,
+    model: "mso",
+    description: "Sokokar Mount"
+}, {
+    race: 626,
+    gender: null,
+    model: "gra",
+    description: "Giant"
+}, {
+    race: 627,
+    gender: null,
+    model: "mso",
+    description: "Sokokar"
+}, {
+    race: 628,
+    gender: null,
+    model: "bnx",
+    description: "10th Anniversary Banner"
+}, {
+    race: 629,
+    gender: null,
+    model: "cak",
+    description: "10th Anniversary Cake"
+}, {
+    race: 630,
+    gender: null,
+    model: "i18",
+    description: "Wine Cask"
+}, {
+    race: 631,
+    gender: null,
+    model: "mhy",
+    description: "Hydra Mount"
+}, {
+    race: 632,
+    gender: null,
+    model: "hyd",
+    description: "Hydra NPC"
+}, {
+    race: 633,
+    gender: null,
+    model: "i19",
+    description: "Wedding Fbelows"
+}, {
+    race: 634,
+    gender: null,
+    model: "i20",
+    description: "Wedding Arbor"
+}, {
+    race: 635,
+    gender: null,
+    model: "i21",
+    description: "Wedding Altar"
+}, {
+    race: 636,
+    gender: null,
+    model: "i22",
+    description: "Powder Keg"
+}, {
+    race: 637,
+    gender: null,
+    model: "apx",
+    description: "Apexus"
+}, {
+    race: 638,
+    gender: null,
+    model: "bel",
+    description: "Bellikos"
+}, {
+    race: 639,
+    gender: null,
+    model: "bfc",
+    description: "Brell's First Creation"
+}, {
+    race: 640,
+    gender: null,
+    model: "bre",
+    description: "Brell"
+}, {
+    race: 642,
+    gender: null,
+    model: "clq",
+    description: "Cliknar Queen"
+}, {
+    race: 643,
+    gender: null,
+    model: "cls",
+    description: "Cliknar Soldier"
+}, {
+    race: 644,
+    gender: null,
+    model: "clw",
+    description: "Cliknar Worker"
+}, {
+    race: 645,
+    gender: null,
+    model: "cdm",
+    description: "Coldain"
+}, {
+    race: 647,
+    gender: null,
+    model: "cse",
+    description: "Crystalskin Sessiloid"
+}, {
+    race: 648,
+    gender: null,
+    model: "gen",
+    description: "Genari"
+}, {
+    race: 649,
+    gender: null,
+    model: "gig",
+    description: "Gigyn"
+}, {
+    race: 650,
+    gender: null,
+    model: "gya",
+    description: "Greken - Young Adult"
+}, {
+    race: 651,
+    gender: null,
+    model: "gyo",
+    description: "Greken - Young"
+}, {
+    race: 652,
+    gender: null,
+    model: "mcl",
+    description: "Cliknar Mount"
+}, {
+    race: 653,
+    gender: null,
+    model: "tel",
+    description: "Telmira"
+}, {
+    race: 654,
+    gender: null,
+    model: "mta",
+    description: "Spider Mount"
+}, {
+    race: 655,
+    gender: null,
+    model: "mbr",
+    description: "Bear Mount"
+}, {
+    race: 656,
+    gender: null,
+    model: "mcr",
+    description: "Rat Mount - Mystery Race"
+}, {
+    race: 657,
+    gender: null,
+    model: "msd",
+    description: "Sessiloid Mount"
+}, {
+    race: 658,
+    gender: null,
+    model: "lth",
+    description: "Morell Thule"
+}, {
+    race: 659,
+    gender: null,
+    model: "mrt",
+    description: "Marionette"
+}, {
+    race: 660,
+    gender: null,
+    model: "bkd",
+    description: "Book Dervish"
+}, {
+    race: 661,
+    gender: null,
+    model: "tpe",
+    description: "Topiary Lion"
+}, {
+    race: 662,
+    gender: null,
+    model: "rdg",
+    description: "Rotdog"
+}, {
+    race: 663,
+    gender: null,
+    model: "amy",
+    description: "Amygdalan"
+}, {
+    race: 664,
+    gender: null,
+    model: "snd",
+    description: "Sandman"
+}, {
+    race: 665,
+    gender: null,
+    model: "gfc",
+    description: "Grandfather Clock"
+}, {
+    race: 666,
+    gender: null,
+    model: "gbm",
+    description: "Gingerbread Man"
+}, {
+    race: 667,
+    gender: null,
+    model: "bfr",
+    description: "Royal Guard"
+}, {
+    race: 668,
+    gender: null,
+    model: "bny",
+    description: "Rabbit"
+}, {
+    race: 669,
+    gender: null,
+    model: "bdr",
+    description: "Blind Dreamer"
+}];

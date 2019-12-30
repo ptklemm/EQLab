@@ -14,19 +14,21 @@ import {
     formValueSelector,
     Field,
     FormSection,
-    FieldArray
+    FieldArray,
+    SubmissionError
 }                                          from 'redux-form';
 import { diff }                            from 'deep-object-diff';
 import { CCol, Checkbox, HInput, HSelect } from '../../common/Form';
 import { ISpawnData, EQEntity }            from '../entity/Entity';
-import { DESPAWN_TYPES }                   from '../../../common/constants';
+import { ANIMATION_TYPES, DESPAWN_TYPES }  from '../../../common/constants';
 
 interface ICustomProps
 {
     style: React.CSSProperties;
     entityType: string;
     entityID: number;
-    saveForm: (entity_type: string, data: any) => void;
+    saveForm:  (entity_type: string, data: any) => Promise<[boolean, string?]>;
+    deleteForm: () => void;
     resetForm: () => void;
     closeForm: () => void;
     handleXChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -102,7 +104,7 @@ class SpawnForm extends React.Component<ISpawnFormProps>
 
     private SubmitForm(values: ISpawnData, dispatch, props): Promise<void>
     {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const delta: any = diff(props.initialValues, values);
 
             let spawn_delta = { ...delta, id: values.id }
@@ -122,32 +124,14 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                 spawngroup: spawngroup_delta
             }
 
-            this.props.saveForm(EQEntity.TYPE_SPAWN, data);
-            // Validate
-            // let error_found = false;
-            // const errors: { system_log_filepaths?: string, script_log_filepaths?: string } = {};
-
-            // if (!values.system_log_filepaths.length)
-            // {
-            //     error_found = true;
-            //     errors.system_log_filepaths = 'You must choose at least one system log.';
-            // }
-
-            // if (values.parse_script_logs && !values.script_log_filepaths.length)
-            // {
-            //     error_found = true;
-            //     errors.script_log_filepaths = 'You must choose at least one script log.';
-            // }
-
-            // if (error_found)
-            // {
-            //     throw new SubmissionError(errors);
-            // }
-
-            setTimeout(() => {
-                console.log('success! resolving promise');
-                resolve();
-            }, 2000)
+            const [save_succeeded, save_error] = await this.props.saveForm(EQEntity.TYPE_SPAWN, data);
+            if (!save_succeeded)
+            {
+                reject(new SubmissionError({ _error: save_error }));
+                return;
+            }
+                
+            resolve();
         });
     }
 
@@ -158,6 +142,8 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                 <Card style={this.props.style}>
                     <Card.Header style={{ padding: 5, display: 'flex', justifyContent: 'space-between' }}>
                         <span>{this.props.entityType}: {this.props.entityID}</span>
+                        <span>{this.props.submitting ? "Saving..." : null}</span>
+                        <span>{this.props.submitFailed && `Save Failed: ${this.props.error ? this.props.error : "Unknown"}`}</span>
                         <Button
                             size="sm"
                             variant="primary"
@@ -187,7 +173,7 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                                             <Field component={HInput} type="number" name="cond_value" label="Con.Value" />
                                         </Row>
                                         <Row>
-                                            <Field component={HInput} type="number" name="animation" label="Animation" />
+                                            <Field component={HSelect} options={ANIMATION_TYPES} name="animation" label="Animation" />
                                         </Row>
                                     </fieldset>
                                 </Col>
@@ -360,6 +346,15 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                         </div>
                         <div>
                             <Button
+                                style={{ marginRight: 20}}
+                                size="sm"
+                                variant="danger"
+                                onClick={this.props.deleteForm}
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                style={{ marginRight: 5}}
                                 size="sm"
                                 variant="warning"
                                 disabled={this.props.pristine}
@@ -368,7 +363,7 @@ class SpawnForm extends React.Component<ISpawnFormProps>
                                 Reset
                             </Button>
                             <Button
-                                style={{ marginLeft: 5, marginRight: 5}}
+                                style={{ marginRight: 5}}
                                 size="sm"
                                 variant="primary"
                                 disabled={this.props.pristine}
@@ -395,7 +390,7 @@ class SpawnForm extends React.Component<ISpawnFormProps>
 export default connect<IMapStateProps, {}, {}>(
     mapStateToProps
 )(reduxForm<ISpawnData, IProps>({
-    form: "Spawn",
+    form: EQEntity.TYPE_SPAWN,
     enableReinitialize: true
 })(SpawnForm));
 
@@ -419,7 +414,7 @@ const SpawnEntriesTable = ({ fields }) => (
             fields.map((entry, i) => {
                 return (
                     <tr key={i}>
-                        <Field component={TdField} name={`${entry}.npc.id`} />
+                        <Field component={TdField} name={`${entry}.npcID`} />
                         <Field component={TdField} name={`${entry}.npc.name`} />
                         <Field component={TdField} name={`${entry}.npc.level`} />
                         <Field component={TdField} name={`${entry}.npc.maxlevel`} />

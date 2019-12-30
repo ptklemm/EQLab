@@ -26,6 +26,8 @@ interface IProps
     toggleSafePoint:       (event: React.ChangeEvent<HTMLInputElement>) => void;
     showUnderworldPlane:   boolean;
     toggleUnderworldPlane: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    swapPickDirection:     boolean;
+    togglePickDirection:   (event: React.ChangeEvent<HTMLInputElement>) => void;
     objects:               string[];
     toggleObject:          (event: React.ChangeEvent<HTMLInputElement>) => void;
     materials:             string[];
@@ -37,8 +39,8 @@ class OptionsPane extends React.Component<IProps>
     public render(): JSX.Element
     {
         return (
-            <SplitterLayout vertical percentage={true} secondaryInitialSize={57}>
-                <Form style={{ paddingRight: 10 }}>
+            <SplitterLayout vertical percentage={true} secondaryInitialSize={55}>
+                <Form style={{ padding: 10, paddingRight: 15 }}>
                     <Form.Group as={Row}>
                         <Form.Label column md={4}>Camera Speed</Form.Label>
                         <Col md={8}>
@@ -86,6 +88,13 @@ class OptionsPane extends React.Component<IProps>
                         disabled={!this.props.sceneLoaded}
                         checked={this.props.showUnderworldPlane}
                         onChange={this.props.toggleUnderworldPlane}
+                    />
+                    <Form.Check
+                        type="checkbox"
+                        label="Reverse Select Direction"
+                        disabled={!this.props.sceneLoaded}
+                        checked={this.props.swapPickDirection}
+                        onChange={this.props.togglePickDirection}
                     />
                 </Form>
                 <Tabs id="graphics-browser" defaultActiveKey="objects" transition={false}>

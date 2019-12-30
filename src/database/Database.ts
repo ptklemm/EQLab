@@ -5,18 +5,39 @@ import Spawn2QueryList from './Spawn2';
 
 export default class DatabaseConnection
 {
-    public Zone:       ZoneQueryList;
-    public Spawn2:     Spawn2QueryList;
-    public SpawnGroup: StandardQueryList; 
+    public BlockedSpell: StandardQueryList;
+    public Door:         StandardQueryList;
+    public Fishing:      StandardQueryList;
+    public Forage:       StandardQueryList;
+    public Grid:         StandardQueryList;
+    public GroundSpawn:  StandardQueryList;
+    public Object:       StandardQueryList;
+    public Spawn2:       Spawn2QueryList;
+    public SpawnGroup:   StandardQueryList; 
+    public StartZone:    StandardQueryList;
+    public Trap:         StandardQueryList;
+    public Zone:         ZoneQueryList;
+    public ZonePoint:    StandardQueryList;
 
     private _connection: mysql.Connection;
 
     constructor(config: mysql.ConnectionConfig)
     {
         this._connection = mysql.createConnection(config);
-        this.Zone       = new ZoneQueryList(this);
-        this.Spawn2     = new Spawn2QueryList(this);
-        this.SpawnGroup = new StandardQueryList(this, 'spawngroup');
+        
+        this.BlockedSpell = new StandardQueryList(this, 'blocked_spells');
+        this.Door         = new StandardQueryList(this, 'doors');
+        this.Fishing      = new StandardQueryList(this, 'fishing');
+        this.Forage       = new StandardQueryList(this, 'forage');
+        this.Grid         = new StandardQueryList(this, 'grid');
+        this.GroundSpawn  = new StandardQueryList(this, 'ground_spawns');
+        this.Object       = new StandardQueryList(this, 'object');
+        this.Spawn2       = new Spawn2QueryList(this);
+        this.SpawnGroup   = new StandardQueryList(this, 'spawngroup');
+        this.StartZone    = new StandardQueryList(this, 'start_zones');
+        this.Trap         = new StandardQueryList(this, 'traps');
+        this.Zone         = new ZoneQueryList(this);
+        this.ZonePoint    = new StandardQueryList(this, 'zone_points');
     }
 
     public get connection()

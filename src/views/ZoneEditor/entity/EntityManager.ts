@@ -21,7 +21,13 @@ import {
 import {
     EQEntity,
     Door,
-    Spawn, ISpawnData
+    IDoorData,
+    GroundSpawn,
+    IGroundSpawnData,
+    Spawn,
+    ISpawnData, 
+    Trap,
+    ITrapData
 }                         from './Entity';
 import { IZoneGeometry }  from '../types/types';
 
@@ -82,29 +88,29 @@ export default class EntityManager
         this._guidelines                              = null;
 
         this.roam_distance_cylinder                   = null;
-        this._roam_distance_material                  = new BABYLON.StandardMaterial("DistanceMaterial", scene);
+        this._roam_distance_material                  = new BABYLON.StandardMaterial("RoamDistanceMaterial", scene);
         this._roam_distance_material.diffuseColor     = BABYLON.Color3.Teal();
-        this._roam_distance_material.specularColor    = new BABYLON.Color3(0, 0, 0);
-        this._roam_distance_material.alpha            = 0.2;
+        this._roam_distance_material.alpha            = 0.3;
+        this._roam_distance_material.wireframe        = false;
 
         this.roam_limits_box                          = null;
-        this._roam_limits_material                    = new BABYLON.StandardMaterial("LimitsMaterial", scene);
+        this._roam_limits_material                    = new BABYLON.StandardMaterial("RoamLimitsMaterial", scene);
         this._roam_limits_material.diffuseColor       = BABYLON.Color3.Purple();
-        this._roam_limits_material.specularColor      = new BABYLON.Color3(0, 0, 0);
-        this._roam_limits_material.alpha              = 0.2;
+        this._roam_limits_material.alpha              = 0.3;
+        this._roam_limits_material.wireframe          = false;
 
         this._underworld_plane_material               = new BABYLON.StandardMaterial("UnderworldPlaneMaterial", scene);
         this._underworld_plane_material.diffuseColor  = BABYLON.Color3.Black();
-        this._underworld_plane_material.specularColor = new BABYLON.Color3(0, 0, 0);
+        this._underworld_plane_material.specularColor = BABYLON.Color3.Black();
         this._underworld_plane_material.alpha         = 0.5;
 
         this._state                                   = store.getState().zone_editor;
     }
 
-    public async PopulateZoneFromDatabase(zone_short_name: string | null): Promise<void>
+    public async PopulateSceneFromDatabase(zone_short_name: string | null): Promise<number>
     {
         if (!zone_short_name)
-            return;
+            return 0;
 
         // zone_points:          await Zone.ZonePoints(zone_short_name),
         // incoming_zone_points: await Zone.IncomingZonePoints(zone_short_name),
@@ -114,7 +120,6 @@ export default class EntityManager
         // grid:                 await Zone.Grid(zone_short_name),
         // ground_spawns:        await Zone.GroundSpawns(zone_short_name),
         // objects:              await Zone.Objects(zone_short_name),
-        // traps:                await Zone.Traps(zone_short_name)
 
         const data = await this._DB.Zone.Full(zone_short_name);
         console.log(data);
@@ -124,9 +129,6 @@ export default class EntityManager
 
         const zone_data: IZoneDataState = {
             info:                 data.info,
-            zone_points:          [],
-            incoming_zone_points: [],
-            start_zones:          [],
             blocked_spells:       [],
             doors:                [],
             incoming_doors:       [],
@@ -136,7 +138,10 @@ export default class EntityManager
             ground_spawns:        [],
             objects:              [],
             spawns:               [],
-            traps:                []
+            start_zones:          [],
+            traps:                [],
+            zone_points:          [],
+            incoming_zone_points: []
         }
 
         for (const door_data of data.doors)
@@ -146,6 +151,13 @@ export default class EntityManager
                 zone_data.doors.push(door);
         }
 
+        for (const ground_spawn_data of data.ground_spawns)
+        {
+            const ground_spawn = this.EntityFactory(EQEntity.TYPE_GROUNDSPAWN, ground_spawn_data) as GroundSpawn | null;
+            if (ground_spawn)
+                zone_data.ground_spawns.push(ground_spawn);
+        }
+
         for (const spawn_data of data.spawns)
         {
             const spawn = this.EntityFactory(EQEntity.TYPE_SPAWN, spawn_data) as Spawn | null;
@@ -153,12 +165,78 @@ export default class EntityManager
                 zone_data.spawns.push(spawn);
         }
 
+        for (const trap_data of data.traps)
+        {
+            const trap = this.EntityFactory(EQEntity.TYPE_TRAP, trap_data) as Trap | null;
+            if (trap)
+                zone_data.traps.push(trap);
+        }
+
         store.dispatch({ type: ACTION.SET_ZONE, zone: zone_data });
+
+        return data.info.underworld;
+    }
+
+    public DepopulateScene(): void
+    {
+        this.safe_point && this.safe_point.dispose();
+        this.underworld_plane && this.underworld_plane.dispose();
+        this._guidelines && this._guidelines.dispose();
+        this.roam_distance_cylinder && this.roam_distance_cylinder.dispose();
+        this.roam_limits_box && this.roam_limits_box.dispose();
+
+        this.labels.executeOnAllControls(control => {
+            control.dispose();
+        });
+
+        this.DisposeMeshes(this._state.zone.doors);
+        this.DisposeMeshes(this._state.zone.ground_spawns);
+        this.DisposeMeshes(this._state.zone.spawns);
+        this.DisposeMeshes(this._state.zone.traps);
+
+        store.dispatch({ type: ACTION.RESET_ZONE });
+    }
+
+    private DisposeMeshes(entities: EQEntity[]): void
+    {
+        for (const entity of entities)
+        {
+            const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+            mesh && mesh.dispose();
+        }
     }
 
     public GetReduxState(): void
     {
         this._state = store.getState().zone_editor;
+    }
+
+    public async UpdateDoor(data: any): Promise<void>
+    {
+        await this._DB.Door.Update(data);
+        const new_door = await this._DB.Door.Select(data.id);
+
+        store.dispatch({ type: ACTION.UPDATE_DOOR, door: new_door });
+
+        if (this._state.selected_entity)
+        {
+            store.dispatch({ type: ACTION.UPDATE_ENTITY, data: new_door });
+            this.PerformSideEffects(this._state.selected_entity);
+        }
+    }
+
+    public async UpdateGroundSpawn(data: any): Promise<void>
+    {
+        await this._DB.GroundSpawn.Update(data);
+        const new_ground_spawn = await this._DB.GroundSpawn.Select(data.id);
+
+        store.dispatch({ type: ACTION.UPDATE_GROUNDSPAWN, ground_spawn: new_ground_spawn });
+
+        if (this._state.selected_entity)
+        {
+            store.dispatch({ type: ACTION.UPDATE_ENTITY, data: new_ground_spawn });
+            this.PerformSideEffects(this._state.selected_entity);
+        }
     }
 
     public async UpdateSpawn(data: any): Promise<void>
@@ -178,30 +256,21 @@ export default class EntityManager
         if (this._state.selected_entity)
         {
             store.dispatch({ type: ACTION.UPDATE_ENTITY, data: new_spawn });
-            this.UpdateSelectedEntity(this._state.selected_entity);
+            this.PerformSideEffects(this._state.selected_entity);
         }
     }
 
-    private UpdateSelectedEntity(entity: EQEntity): void
+    public async UpdateTrap(data: any): Promise<void>
     {
-        const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+        await this._DB.Trap.Update(data);
+        const new_trap = await this._DB.Trap.Select(data.id);
 
-        if (!mesh)
-            return;
+        store.dispatch({ type: ACTION.UPDATE_TRAP, trap: new_trap });
 
-        
-        this.CreateGuideLines(mesh);
-        this._position_gizmo.attachedMesh = mesh;
-        this._rotation_gizmo.attachedMesh = mesh;
-
-        // Side-effects
-        switch (entity.type)
+        if (this._state.selected_entity)
         {
-            case EQEntity.TYPE_SPAWN:
-                this.SelectSpawn(entity as Spawn, mesh);
-                break;
-            default:
-                break;
+            store.dispatch({ type: ACTION.UPDATE_ENTITY, data: new_trap });
+            this.PerformSideEffects(this._state.selected_entity);
         }
     }
 
@@ -222,24 +291,61 @@ export default class EntityManager
             else
             {
                 // Deselect current entity
-                this.DeselectEntity(entity);
+                this.DeselectEntity(this._state.selected_entity);
             }   
         }
 
         store.dispatch({ type: ACTION.SELECT_ENTITY, selected_entity: entity });
 
-        this.CreateGuideLines(mesh);
-        this._position_gizmo.attachedMesh = mesh;
-        this._rotation_gizmo.attachedMesh = mesh;
-
         // Side-effects
+        this.PerformSideEffects(entity, mesh);
+    }
+
+    private PerformSideEffects(entity: EQEntity, mesh: BABYLON.AbstractMesh | null = null)
+    {
+        if (!mesh)
+            mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+
+        if (!mesh)
+            return;
+
         switch (entity.type)
         {
+            case EQEntity.TYPE_DOOR:
+                this._position_gizmo.attachedMesh = mesh;
+                this._rotation_gizmo.attachedMesh = mesh;
+                break;
+            case EQEntity.TYPE_GROUNDSPAWN:
+                this._rotation_gizmo.attachedMesh = mesh;
+                // this.SelectGroundspawn(entity as GroundSpawn, mesh);
+                break;
             case EQEntity.TYPE_SPAWN:
+                this._position_gizmo.attachedMesh = mesh;
+                this._rotation_gizmo.attachedMesh = mesh;
                 this.SelectSpawn(entity as Spawn, mesh);
+                break;
+            case EQEntity.TYPE_TRAP:
+                const trap_mesh = mesh as BABYLON.Mesh;
+                const scaling_matrix = BABYLON.Matrix.Scaling(trap_mesh.scaling.x, trap_mesh.scaling.y, trap_mesh.scaling.z);
+                trap_mesh.bakeTransformIntoVertices(scaling_matrix);
+                trap_mesh.scaling = BABYLON.Vector3.One();
+                this._position_gizmo.attachedMesh = mesh;
                 break;
             default:
                 break;
+        }
+
+        this.CreateGuideLines(mesh);
+    }
+
+    private SelectGroundspawn(ground_spawn: GroundSpawn, mesh: BABYLON.AbstractMesh): void
+    {
+        const width = Math.abs(ground_spawn.data.max_x - ground_spawn.data.min_x);
+        const depth = Math.abs(ground_spawn.data.max_y - ground_spawn.data.min_y);
+
+        if (width > 0 && depth > 0)
+        {
+            console.log('Show Ground Spawn Box')
         }
     }
 
@@ -258,26 +364,63 @@ export default class EntityManager
         }
     }
 
+    public async DeleteEntity(entity: EQEntity): Promise<void>
+    {
+        switch (entity.type)
+        {
+            case EQEntity.TYPE_DOOR:
+                await this._DB.Door.Delete(entity.id);
+                store.dispatch({ type: ACTION.DELETE_DOOR, id: entity.id });
+                this.DeselectEntity(entity);
+                break;
+            case EQEntity.TYPE_SPAWN:
+                await this._DB.Spawn2.Delete(entity.id);
+                store.dispatch({ type: ACTION.DELETE_SPAWN, id: entity.id });
+                this.DeselectEntity(entity);
+                break;
+            case EQEntity.TYPE_TRAP:
+                await this._DB.Trap.Delete(entity.id);
+                store.dispatch({ type: ACTION.DELETE_TRAP, id: entity.id });
+                this.DeselectEntity(entity);
+                break;
+            default:
+                break;
+        }
+
+        const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+        
+        if (mesh)
+            mesh.dispose();
+
+        const label = this.GetLabelByID(entity.label_id);
+
+        if (label)
+            label.dispose();
+    }
+
     public ResetEntity(entity: EQEntity): void
     {
         // Reset Entity Form
         store.dispatch(resetReduxForm(entity.type));
 
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+
         if (!mesh)
             return;
 
-        const position = EQPosition.ToVector3(entity.data.x, entity.data.y, entity.data.z);
-
+        let position: BABYLON.Vector3;
         let rotation: BABYLON.Quaternion;
+
         switch (entity.type)
         {
             case EQEntity.TYPE_DOOR:
                 const door = entity as Door;
-                rotation = EQHeading.HeadingAndInclineToQuaternion(door.data.heading, door.data.incline);
+                position = EQPosition.ToVector3(door.data.pos_x, door.data.pos_y, door.data.pos_z);
+                rotation = EQHeading.HeadingAndInclineToQuaternion(door.data.heading, door.data.incline || 0);
                 break;
             case EQEntity.TYPE_SPAWN:
                 const spawn = entity as Spawn;
+                position = EQPosition.ToVector3(spawn.data.x, spawn.data.y, spawn.data.z);
                 rotation = EQHeading.ToQuaternion(spawn.data.heading);
                 if (spawn.data.spawngroup)
                 {
@@ -286,12 +429,18 @@ export default class EntityManager
                     this.CreateRoamLimitsBox(spawngroup.min_x, spawngroup.min_y, spawngroup.max_x, spawngroup.max_y);
                 }
                 break;
+            case EQEntity.TYPE_TRAP:
+                const trap = entity as Trap;
+                position = EQPosition.ToVector3(trap.data.x, trap.data.y, trap.data.z);
+                rotation = BABYLON.Quaternion.Zero();
+                break;
             default:
                 return;
         }
 
         mesh.position = position;
         mesh.rotationQuaternion = rotation;
+        mesh.scaling = BABYLON.Vector3.One();
     }
 
     public DeselectEntity(entity: EQEntity): void
@@ -353,19 +502,75 @@ export default class EntityManager
         mesh.position.y = num_z;
     }
 
-    public ChangeEntityHeading(entity: EQEntity, heading: string): void
+    public ChangeEntityHeading(entity: EQEntity, heading: string | number, incline?: string | number): void
     {
         if (!heading)
             heading = '0';
 
-        let num_heading = Number(parseFloat(heading).toFixed(6));
+        let num_heading = Number(heading);
+
+        if (isNaN(num_heading) || !num_heading)
+            num_heading = 0;
         
         const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
         
         if (!mesh)
             return;
 
-        mesh.rotationQuaternion = EQHeading.ToQuaternion(num_heading);
+        if (entity.type === EQEntity.TYPE_DOOR)
+        {
+            mesh.rotationQuaternion = EQHeading.HeadingAndInclineToQuaternion(num_heading, Number(incline) || 0);
+        }
+        else
+        {
+            mesh.rotationQuaternion = EQHeading.ToQuaternion(num_heading);
+        }
+    }
+
+    public ChangeEntityRadius(entity: EQEntity, radius: string | number): void
+    {
+        if (!radius)
+            radius = '0';
+
+        let num_radius = Number(radius);
+
+        if (isNaN(num_radius) || !num_radius)
+            num_radius = 0;
+
+        const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+        
+        if (!mesh)
+            return;
+
+        if (entity.type === EQEntity.TYPE_TRAP)
+        {
+            const trap = entity as Trap;
+            const radius = trap.data.radius || 1;
+            mesh.scaling = new BABYLON.Vector3(num_radius / radius, 1.0, num_radius / radius);
+        }
+    }
+
+    public ChangeEntityHeight(entity: EQEntity, height: string | number): void
+    {
+        if (!height)
+            height = '0';
+
+        let num_height = Number(height);
+
+        if (isNaN(num_height) || !num_height)
+            num_height = 0;
+
+        const mesh = this._scene.getMeshByUniqueID(entity.mesh_id);
+        
+        if (!mesh)
+            return;
+        
+        if (entity.type === EQEntity.TYPE_TRAP)
+        {
+            const trap = entity as Trap;
+            const height = trap.data.maxzdiff || 1;
+            mesh.scaling = new BABYLON.Vector3(1.0, num_height / height, 1.0);
+        }
     }
 
     public CreateRoamDistanceCylinder(roam_distance: number, mesh: BABYLON.AbstractMesh): void
@@ -460,7 +665,16 @@ export default class EntityManager
         if (!mesh)
             return;
 
-        const rotation = EQHeading.FromQuaternion(mesh.rotationQuaternion).format(entity.type);
+        let rotation;
+
+        if (entity.type === EQEntity.TYPE_DOOR)
+        {
+            rotation = EQHeading.QuaternionToHeadingAndIncline(mesh.rotationQuaternion).format(entity.type);
+        }
+        else
+        {
+            rotation = EQHeading.FromQuaternion(mesh.rotationQuaternion).format(entity.type);
+        }
 
         store.dispatch(changeReduxForm(entity.type, 'heading', rotation.heading));
     }
@@ -469,7 +683,7 @@ export default class EntityManager
     {
         this._guidelines && this._guidelines.dispose();
         this._guidelines = null;
-        
+
         const lines = [[
             new BABYLON.Vector3(-10000, mesh.position.y, mesh.position.z),
             new BABYLON.Vector3( 10000, mesh.position.y, mesh.position.z)
@@ -508,15 +722,21 @@ export default class EntityManager
     private EntityFactory(type: string, data: any): EQEntity | null
     {
         let entity: EQEntity | null = null;
-        let mesh: BABYLON.InstancedMesh | null = null;
+        let mesh: BABYLON.AbstractMesh | null = null;
 
         switch (type)
         {
             case EQEntity.TYPE_DOOR:
                 [entity, mesh] = this.CreateDoor(data);
                 break;
+            case EQEntity.TYPE_GROUNDSPAWN:
+                [entity, mesh] = this.CreateGroundSpawn(data);
+                break;
             case EQEntity.TYPE_SPAWN:
                 [entity, mesh] = this.CreateSpawn(data);
+                break;
+            case EQEntity.TYPE_TRAP:
+                [entity, mesh] = this.CreateTrap(data);
                 break;
             default:
                 break;
@@ -528,7 +748,7 @@ export default class EntityManager
         return entity;
     }
 
-    private CreateDoor(door: any): [Door, BABYLON.InstancedMesh]
+    private CreateDoor(door: IDoorData): [Door, BABYLON.InstancedMesh]
     {
         const existing_model = this._scene.getMeshByID(`${door.name}_ACTORDEF`) as BABYLON.Mesh | null;
     
@@ -544,7 +764,7 @@ export default class EntityManager
         }
 
         model.position           = EQPosition.ToVector3(door.pos_x, door.pos_y, door.pos_z);
-        model.rotationQuaternion = EQHeading.HeadingAndInclineToQuaternion(door.heading, door.incline);
+        model.rotationQuaternion = EQHeading.HeadingAndInclineToQuaternion(door.heading, door.incline || 0);
         model.scaling            = new BABYLON.Vector3(door.size / 100, door.size / 100, door.size / 100);
         model.isVisible          = this._state.options.show_doors;
 
@@ -574,6 +794,43 @@ export default class EntityManager
         return [new Door(door.id, label.uniqueId, model.uniqueId, door), model];
     }
 
+    private CreateGroundSpawn(data: IGroundSpawnData): [GroundSpawn, BABYLON.InstancedMesh]
+    {
+        const width = Math.abs(data.max_x - data.min_x);
+        const depth = Math.abs(data.max_y - data.min_y);
+        const center_x = width === 0 ? data.max_x : data.min_x + (width / 2);
+        const center_y = depth === 0 ? data.max_y : data.min_y + (depth / 2);
+
+        const mesh = this._graphics_factory.default_ground_spawn_mesh.createInstance(`ground_spawn_${data.id}`);
+        mesh.position = EQPosition.ToVector3(center_x, center_y, data.max_z);
+        mesh.rotationQuaternion = EQHeading.ToQuaternion(data.heading);
+        // mesh.isVisible = this._state.options.show_traps;
+
+        const label = new GUI.TextBlock();
+        label.text             = `Ground Spawn_${data.id}: ${data.item_name}`;
+        label.color            = "#ffffff";
+        label.style            = this._label_style;
+        label.outlineWidth     = 2;
+        label.outlineColor     = "#000000";
+        // label.isVisible        = this._state.options.show_trap_labels;
+        label.isPointerBlocker = false;
+        label.metadata = { EQType: EQEntity.TYPE_GROUNDSPAWN, EQID: data.id, show: true }
+
+        this.labels.addControl(label);
+
+        label.linkWithMesh(mesh);   
+        label.linkOffsetY = -35;
+
+        BABYLON.Tags.EnableFor(mesh);
+        BABYLON.Tags.AddTagsTo(mesh, EQEntity.TYPE_GROUNDSPAWN);
+
+        mesh.metadata = { EQType: EQEntity.TYPE_GROUNDSPAWN, EQID: data.id }
+
+        this._octree.dynamicContent.push(mesh);
+
+        return [new GroundSpawn(data.id, label.uniqueId, mesh.uniqueId, data), mesh];
+    }
+
     private CreateSpawn(spawn: ISpawnData): [Spawn, BABYLON.InstancedMesh]
     {
         const model = this._graphics_factory.default_spawn_mesh.createInstance(`spawn_${spawn.id}`);
@@ -583,18 +840,10 @@ export default class EntityManager
         model.isVisible = this._state.options.show_spawns;
 
         const label = new GUI.TextBlock();
+        const [label_text, label_color] = this.CreateSpawnLabelText(spawn, false);
 
-        if (spawn.spawngroup)
-        {
-            label.text = `${spawn.spawngroup.name} (${FormatRespawnTime(spawn.respawntime, spawn.variance)})`;
-            label.color = "#ffffff";
-        }
-        else
-        {
-            label.text = "NO SPAWNGROUP";
-            label.color = "#ff0000";
-        }
-        
+        label.text             = label_text;
+        label.color            = label_color;
         label.style            = this._label_style;
         label.outlineWidth     = 2;
         label.outlineColor     = "#000000";
@@ -615,6 +864,45 @@ export default class EntityManager
         this._octree.dynamicContent.push(model);
 
         return [new Spawn(spawn.id, label.uniqueId, model.uniqueId, spawn), model];
+    }
+
+    private CreateTrap(trap: ITrapData): [Trap, BABYLON.Mesh]
+    {
+        const mesh = BABYLON.MeshBuilder.CreateCylinder(`trap_${trap.id}`, {
+            height: trap.maxzdiff,
+            diameter: trap.radius * 2,
+            enclose: true,
+            sideOrientation: BABYLON.Mesh.DOUBLESIDE,
+            updatable: true
+        }, this._scene);
+
+        mesh.material = this._graphics_factory.default_trap_material;
+        mesh.position = EQPosition.ToVector3(trap.x, trap.y, trap.z);
+        mesh.isVisible = this._state.options.show_traps;
+
+        const label = new GUI.TextBlock();
+        label.text             = this.CreateTrapLabelText(trap);
+        label.color            = "#ffffff";
+        label.style            = this._label_style;
+        label.outlineWidth     = 2;
+        label.outlineColor     = "#000000";
+        label.isVisible        = this._state.options.show_trap_labels;
+        label.isPointerBlocker = false;
+        label.metadata = { EQType: EQEntity.TYPE_TRAP, EQID: trap.id, show: this._state.options.show_trap_labels }
+
+        this.labels.addControl(label);
+
+        label.linkWithMesh(mesh);   
+        label.linkOffsetY = -35;
+
+        BABYLON.Tags.EnableFor(mesh);
+        BABYLON.Tags.AddTagsTo(mesh, EQEntity.TYPE_TRAP);
+
+        mesh.metadata = { EQType: EQEntity.TYPE_TRAP, EQID: trap.id }
+
+        this._octree.dynamicContent.push(mesh);
+
+        return [new Trap(trap.id, label.uniqueId, mesh.uniqueId, trap), mesh];
     }
     
     private CreateSafePoint(position: EQPosition): void
@@ -655,13 +943,84 @@ export default class EntityManager
         this._octree.dynamicContent.push(this.underworld_plane);
     }
 
+    public CreateSpawnLabelText(spawn: ISpawnData, show_respawn_time: boolean = false): [string, string]
+    {
+        let text = '';
+        let color = '';
+        if (spawn.spawngroup)
+        {
+            if (show_respawn_time)
+            {
+                text = `${spawn.spawngroup.name} (${FormatRespawnTime(spawn.respawntime, spawn.variance)})`;
+            }
+            else
+            {
+                text = `${spawn.spawngroup.name}`;
+            }
+            color = "#ffffff";
+        }
+        else
+        {
+            text = "NO SPAWNGROUP";
+            color = "#ff0000";
+        }
+
+        return [text, color];
+    }
+
+    public CreateSpawnLabelTextBySpawnID(id: number, show_respawn_time: boolean = false): [string, string]
+    {
+        const spawn = this.GetEntityByTypeAndID(EQEntity.TYPE_SPAWN, id) as Spawn;
+
+        if (!spawn)
+            return ['MISSING LABEL', "#ffffff"];
+
+        return this.CreateSpawnLabelText(spawn.data, show_respawn_time);
+    }
+
+    public CreateTrapLabelText(trap: ITrapData): string
+    {
+        let text = '';
+
+        switch (trap.effect)
+        {
+            case 0:
+                text = `Trap_${trap.id}: Spell(${trap.spell_name}, ${trap.chance}%)`;
+                break;
+            case 1:
+                text = `Trap_${trap.id}: Alarm(${trap.effectvalue}yds, Aggro ${trap.effectvalue2===0?'ALL':'KOS'}, ${trap.chance}%)`;
+                break;
+            case 2:
+            case 3:
+                text = `Trap_${trap.id}: Spawn(${trap.npc_name} x${trap.effectvalue2}, ${trap.chance}%)`;
+                break;
+            case 4:
+                text = `Trap_${trap.id}: Damage(${trap.effectvalue}-${trap.effectvalue2}, ${trap.chance}%)`;
+                break;
+            default:
+                text =`Trap_${trap.id}: UNKNOWN EFFECT`;
+                break;
+        }
+
+        return text;
+    }
+
     private GetEntityByTypeAndID(type: string, id: number): EQEntity | undefined
     {
         switch (type)
         {
-            case EQEntity.TYPE_DOOR:  return find(this._state.zone.doors,  { id });
-            case EQEntity.TYPE_SPAWN: return find(this._state.zone.spawns, { id });
-            default:                  return;
+            case EQEntity.TYPE_DOOR:        return find(this._state.zone.doors,          { id });
+            case EQEntity.TYPE_GROUNDSPAWN: return find(this._state.zone.ground_spawns,  { id });
+            case EQEntity.TYPE_SPAWN:       return find(this._state.zone.spawns,         { id });
+            case EQEntity.TYPE_TRAP:        return find(this._state.zone.traps,          { id });
+            default:                        return;
         }
+    }
+
+    private GetLabelByID(id: number): GUI.Control | undefined
+    {
+        const controls = this.labels.getDescendants(true, control => control.uniqueId === id);
+        if (controls.length)
+            return controls[0];
     }
 }

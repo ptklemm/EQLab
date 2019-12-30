@@ -79,6 +79,7 @@ interface IState
     show_bounding_boxes:  boolean;
     show_zone_axes:       boolean;
     show_facet_normals:   boolean;
+    swap_pick_direction:  boolean;
     objects:              string[];
     materials:            string[];
     spawngroup_expanded:  boolean;
@@ -124,6 +125,7 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             show_bounding_boxes:   false,
             show_zone_axes:        true,
             show_facet_normals:    false,
+            swap_pick_direction:   false,
             objects:               [],
             materials:             [],
             spawngroup_expanded:   false
@@ -135,7 +137,7 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             host:     '127.0.0.1',
             user:     'root',
             password: 'sanchez88',
-            database: 'nostalgia_eq'
+            database: 'peq'
         });
 
         this.file_loader      = new FileLoader('X:\\EQCLIENT');
@@ -167,15 +169,19 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         this.ToggleWireframe              = this.ToggleWireframe.bind(this);
         this.ToggleBoundingBoxes          = this.ToggleBoundingBoxes.bind(this);
         this.ToggleFacetNormals           = this.ToggleFacetNormals.bind(this);
+        this.TogglePickDirection          = this.TogglePickDirection.bind(this);
         this.ToggleZoneObject             = this.ToggleZoneObject.bind(this);
         this.ToggleMaterial               = this.ToggleMaterial.bind(this);
         this.HandleFormSave               = this.HandleFormSave.bind(this);
+        this.HandleFormDelete             = this.HandleFormDelete.bind(this);
         this.HandleFormReset              = this.HandleFormReset.bind(this);
         this.HandleFormClose              = this.HandleFormClose.bind(this);
         this.HandleFormXChange            = this.HandleFormXChange.bind(this);
         this.HandleFormYChange            = this.HandleFormYChange.bind(this);
         this.HandleFormZChange            = this.HandleFormZChange.bind(this);
         this.HandleFormHeadingChange      = this.HandleFormHeadingChange.bind(this);
+        this.HandleFormRadiusChange       = this.HandleFormRadiusChange.bind(this);
+        this.HandleFormZDifferenceChange  = this.HandleFormZDifferenceChange.bind(this);
         this.ToggleRoamCylinder           = this.ToggleRoamCylinder.bind(this);
         this.ToggleRoamBox                = this.ToggleRoamBox.bind(this);
         this.HandleFormRoamDistanceChange = this.HandleFormRoamDistanceChange.bind(this);
@@ -203,8 +209,13 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         await this.CreateScene(this.engine);
     }
 
-    public componentDidUpdate(prevProps: IZoneEditorProps)
+    public async componentDidUpdate(prevProps: IZoneEditorProps)
     {
+        if (this.props.zone_name !== prevProps.zone_name && this.engine)
+        {
+            await this.CreateScene(this.engine)
+        }
+
         if (this.entity_manager && (prevProps !== this.props))
             this.entity_manager.GetReduxState();
     }
@@ -224,9 +235,14 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
     ListenForMenuEvents(): void
     {
         ipcRenderer.on('open-zone', () => {this.ShowSelectZoneModal();});
+        ipcRenderer.on('reload-from-database', () => {this.ReloadScene();});
 
         ipcRenderer.on('toggle-entity-visibility', (e, entity_type, value) => {
             this.ToggleEntityVisibility(entity_type, value);
+        });
+
+        ipcRenderer.on('toggle-spawn-respawnlabels', (e, value) => {
+            this.ToggleRespawnLabels(value);
         });
     }
 
@@ -238,6 +254,19 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
     CloseSelectZoneModal(): void
     {
        this.setState({ selecting_zone: false }); 
+    }
+
+    SelectZone(zone_short_name: string): void
+    {
+        if (!zone_short_name)
+            return;
+
+        this.CloseSelectZoneModal();
+
+        if (zone_short_name !== this.props.zone_name)
+        {
+            this.props.setZonename(zone_short_name);
+        }
     }
 
     ToggleEntityVisibility(entity_type: string, value: boolean): void
@@ -259,6 +288,14 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             case 'Spawn Labels':
                 this.props.setOptions({ ...this.props.options, show_spawn_labels: value });
                 this.ToggleLabelsByType(EQEntity.TYPE_SPAWN, value);
+                break;
+            case 'Traps':
+                this.props.setOptions({ ...this.props.options, show_traps: value });
+                this.ToggleMeshesByTags(EQEntity.TYPE_TRAP, value);
+                break;
+            case 'Trap Labels':
+                this.props.setOptions({ ...this.props.options, show_trap_labels: value });
+                this.ToggleLabelsByType(EQEntity.TYPE_TRAP, value);
                 break;
             default:
                 break;
@@ -287,17 +324,18 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         });
     }
 
-    SelectZone(zone_short_name: string): void
+    ToggleRespawnLabels(value: boolean): void
     {
-        if (!zone_short_name)
+        if (!this.entity_manager || !this.entity_manager.labels)
             return;
-
-        this.CloseSelectZoneModal();
-
-        if (zone_short_name !== this.props.zone_name)
-        {
-            this.props.setZonename(zone_short_name);
-        }
+    
+        this.entity_manager.labels.executeOnAllControls(label => {
+            if (label.metadata && label.metadata.EQType === EQEntity.TYPE_SPAWN)
+            {
+                //@ts-ignore
+                label.text = this.entity_manager.CreateSpawnLabelTextBySpawnID(label.metadata.EQID, value)[0];
+            }
+        });
     }
 
     // Scene
@@ -325,6 +363,15 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             objects:           [],
             materials:         []
         });
+    }
+
+    async ReloadScene(): Promise<void>
+    {
+        if (this.scene && this.entity_manager)
+        {
+            this.entity_manager.DepopulateScene();
+            await this.entity_manager.PopulateSceneFromDatabase(this.props.zone_name);
+        }
     }
 
     async CreateScene(engine: BABYLON.Engine): Promise<void>
@@ -375,12 +422,14 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
 
         this.graphics_factory.default_mesh_length = Math.trunc(Math.sqrt(Math.log(this.zone_geometry.volume)) * 1);
 
-        this.CreateClipPlanes(scene, this.zone_geometry.min.y, this.zone_geometry.max.y)
-
+        
         this.octree = scene.createOrUpdateSelectionOctree();
 
         this.entity_manager = new EntityManager(this.DB, scene, this.graphics_factory, this.zone_geometry, this.octree);
-        await this.entity_manager.PopulateZoneFromDatabase(this.props.zone_name);
+        const underworld = await this.entity_manager.PopulateSceneFromDatabase(this.props.zone_name);
+
+        // const clip_bottom_init = underworld < this.zone_geometry.min.y ? underworld : this.zone_geometry.min.y;
+        this.CreateClipPlanes(scene, this.zone_geometry.min.y * 1.1, this.zone_geometry.max.y * 1.1);
 
         scene.registerBeforeRender(() => {
             if (this.entity_manager)
@@ -500,12 +549,16 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             
             if
             (
-                BABYLON.Tags.MatchesQuery(info.pickedMesh, "Entity") &&
+                BABYLON.Tags.MatchesQuery(mesh, "Entity") &&
                 mesh.position.y > this.state.clip_bottom &&
                 mesh.position.y < this.state.clip_top
             )
             {
                 // Entity found
+                // Entity is currently hidden, break
+                if (!mesh.isVisible)
+                    break;
+
                 entity_mesh = info.pickedMesh;
                 break;
             }
@@ -523,7 +576,8 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
             // The new pickInfos don't have a ray attached so use the original
             const ray_direction = pick_info.ray.direction;
             const dot_product = BABYLON.Vector3.Dot(normal, ray_direction);
-            if (dot_product > 0)
+            const culled_mesh = this.state.swap_pick_direction ? dot_product < 0 : dot_product > 0;
+            if (culled_mesh)
                 return; // Non-culled mesh was hit
         }
 
@@ -713,6 +767,11 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         this.setState({ show_facet_normals: event.target.checked });
     }
 
+    TogglePickDirection(event: React.ChangeEvent<HTMLInputElement>): void
+    {
+        this.setState({ swap_pick_direction: event.target.checked });
+    }
+
     ToggleZoneObject(event: React.ChangeEvent<HTMLInputElement>): void
     {
         if (!this.scene)
@@ -737,26 +796,52 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
     }
 
     // Entity Form
-    async HandleFormSave(entity_type: string, data: any): Promise<void>
+    async HandleFormSave(entity_type: string, data: any): Promise<[boolean, string?]>
     {
         switch (entity_type)
         {
+            case EQEntity.TYPE_DOOR:
+                await this.entity_manager?.UpdateDoor(data);
+                return [true];
+            case EQEntity.TYPE_GROUNDSPAWN:
+                await this.entity_manager?.UpdateGroundSpawn(data);
+                return [true];
             case EQEntity.TYPE_SPAWN:
                 if (data.spawngroup)
                 {
-                    remote.dialog.showMessageBox(this._window, {
+                    const res = await remote.dialog.showMessageBox(this._window, {
                         type: 'warning',
                         message: 'Changing a spawngroup will apply to all spawns with this spawngroup. Proceed?',
                         buttons: ['OK', 'Cancel']
-                    })
-                    .then((res) => {
-                        console.log(res.response);
-                    })
+                    });
+
+                    if (res.response === 1)
+                        return [false, 'Canceled'];
                 }
-                // await this.entity_manager?.UpdateSpawn(data);
-                break;
+                await this.entity_manager?.UpdateSpawn(data);
+                return [true];
+            case EQEntity.TYPE_TRAP:
+                await this.entity_manager?.UpdateTrap(data);
+                return [true];
             default:
+                return [false, 'Entity Type Not Found'];
+        }
+    }
+
+    async HandleFormDelete(): Promise<void>
+    {
+        if (this.entity_manager && this.props.selected_entity)
+        {
+            const res = await remote.dialog.showMessageBox(this._window, {
+                type: 'warning',
+                message: 'Are you sure you want to delete this?',
+                buttons: ['OK', 'Cancel']
+            });
+
+            if (res.response === 1)
                 return;
+
+            this.entity_manager.DeleteEntity(this.props.selected_entity);
         }
     }
 
@@ -801,6 +886,20 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
         if (this.entity_manager && this.props.selected_entity)
         {
             this.entity_manager.ChangeEntityHeading(this.props.selected_entity, event.target.value);
+        }
+    }, 500);
+
+    HandleFormRadiusChange = debounce((event: React.ChangeEvent<HTMLInputElement>) => {
+        if (this.entity_manager && this.props.selected_entity)
+        {
+            this.entity_manager.ChangeEntityRadius(this.props.selected_entity, event.target.value);
+        }
+    }, 500);
+
+    HandleFormZDifferenceChange = debounce((event: React.ChangeEvent<HTMLInputElement>) => {
+        if (this.entity_manager && this.props.selected_entity)
+        {
+            this.entity_manager.ChangeEntityHeight(this.props.selected_entity, event.target.value);
         }
     }, 500);
 
@@ -896,6 +995,8 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
                                 toggleSafePoint={this.ToggleSafePoint}
                                 showUnderworldPlane={this.props.options.show_underworld_plane}
                                 toggleUnderworldPlane={this.ToggleUnderworldPlane}
+                                swapPickDirection={this.state.swap_pick_direction}
+                                togglePickDirection={this.TogglePickDirection}
                                 objects={this.state.objects}
                                 toggleObject={this.ToggleZoneObject}
                                 materials={this.state.materials}
@@ -918,12 +1019,15 @@ class ZoneEditor extends React.Component<IZoneEditorProps, IState>
                             style={{ position: 'absolute', top: 5, left: 5, width: 800 }}
                             entity={this.props.selected_entity}
                             saveForm={this.HandleFormSave}
+                            deleteForm={this.HandleFormDelete}
                             resetForm={this.HandleFormReset}
                             closeForm={this.HandleFormClose}
                             handleXChange={this.HandleFormXChange}
                             handleYChange={this.HandleFormYChange}
                             handleZChange={this.HandleFormZChange}
                             handleHeadingChange={this.HandleFormHeadingChange}
+                            handleRadiusChange={this.HandleFormRadiusChange}
+                            handleZDifferenceChange={this.HandleFormZDifferenceChange}
                             spawngroupExpanded={this.state.spawngroup_expanded}
                             toggleSpawngroupExpanded={this.ToggleSpawngroupExpanded}
                             showRoamCylinder={this.props.options.show_roam_distance_cylinder}

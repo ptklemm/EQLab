@@ -575,10 +575,26 @@ export const NPC_EMOTE_ENTRIES = {
   }
 }
 
+export const ANIMATION_TYPES = [
+    { value: 0, label: "Standing" },
+    { value: 1, label: "Sitting" },
+    { value: 2, label: "Crouching" },
+    { value: 3, label: "Laying" },
+    { value: 4, label: "Looting" }
+];
+
 export const DESPAWN_TYPES = [
     { value: 0, label: "None" },
     { value: 1, label: "Repop" },
     { value: 2, label: "Repop on Timer" },
     { value: 3, label: "Depop" },
     { value: 4, label: "Depop on Timer" }
+];
+
+export const TRAP_TYPES = [
+    { value: 0, label: "Spell" },
+    { value: 1, label: "Alarm" },
+    { value: 2, label: "NPC (Small Area)" },
+    { value: 3, label: "NPC (Large Area)" },
+    { value: 4, label: "Damage" }
 ];

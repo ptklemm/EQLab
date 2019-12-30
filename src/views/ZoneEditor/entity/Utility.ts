@@ -144,22 +144,32 @@ export class EQHeading
     public static HeadingAndInclineToQuaternion(heading: number, incline: number): BABYLON.Quaternion
     {
         return BABYLON.Quaternion.RotationYawPitchRoll(
-            BABYLON.Angle.FromDegrees((heading / 512) * 360).radians(),
+            BABYLON.Angle.FromDegrees((-heading / 512) * 360).radians(),
             BABYLON.Angle.FromDegrees(incline).radians(),
             0
         );
     }
 
-    public static QuaternionToHeadingAndIncline(quaternion: BABYLON.Quaternion): EQHeading
+    public static QuaternionToHeadingAndIncline(quaternion: BABYLON.Quaternion | null): EQHeading
     {
+        if (!quaternion)
+            return new EQHeading(0, 0);
+
         const rotation = quaternion.toEulerAngles();
 
-        let heading = Number(BABYLON.Angle.FromRadians(rotation.y).degrees().toPrecision(10)) * (512 / 360);
+        let heading = Number(BABYLON.Angle.FromRadians(rotation.y).degrees().toPrecision(10)) * (512 / 360) * -1;
         if (heading % 1 === 0) { heading = Math.trunc(heading); }
     
         let incline = Number(BABYLON.Angle.FromRadians(rotation.x).degrees().toPrecision(10));
         if (incline % 1 === 0) { incline = Math.trunc(incline); }
-    
+
+        // Keep headings between 0 and 512
+        if (heading < 0)
+            heading += 512;
+
+        if (heading > 512)
+            heading -= 512;
+
         return new EQHeading(heading, incline);
     }
 }
